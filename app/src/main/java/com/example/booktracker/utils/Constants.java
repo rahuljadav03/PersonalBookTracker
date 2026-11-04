@@ -1,4 +1,4 @@
-package com.example.booktracker;
+package com.example.booktracker.utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,4 +20,16 @@ public class Constants {
             "Romance",
             "Other"
     );
+
+    // Validation Limits
+    public static final int TITLE_MIN_LENGTH = 2;
+    public static final int TITLE_MAX_LENGTH = 100;
+
+    public static final int AUTHOR_MIN_LENGTH = 2;
+    public static final int AUTHOR_MAX_LENGTH = 60;
+
+    public static final int MIN_PAGES = 1;
+    public static final int MAX_PAGES = 10000;
+
+    public static final int DESCRIPTION_MAX_LENGTH = 500;
 }
