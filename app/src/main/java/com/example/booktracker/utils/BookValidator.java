@@ -1,23 +1,18 @@
-package com.example.booktracker;
+package com.example.booktracker.utils;
+
+import com.example.booktracker.model.Book;
 
 public class BookValidator {
-
-    /**
-     * Validates a book object against all business rules.
-     * @param book The book to validate.
-     * @throws IllegalArgumentException if any rule is violated.
-     */
     public static void validate(Book book) throws IllegalArgumentException {
         // 1. Title Validation
-        if (book.getTitle() == null || book.getTitle().trim().length() < 2 || book.getTitle().trim().length() > 100) {
-            throw new IllegalArgumentException("Title must be between 2 and 100 characters.");
+        if (book.getTitle() == null || book.getTitle().trim().length() < Constants.TITLE_MIN_LENGTH || book.getTitle().trim().length() > Constants.TITLE_MAX_LENGTH) {
+            throw new IllegalArgumentException("Title must be between " + Constants.TITLE_MIN_LENGTH + " and " + Constants.TITLE_MAX_LENGTH + " characters.");
         }
 
         // 2. Author Validation
-        if (book.getAuthor() == null || book.getAuthor().trim().length() < 2 || book.getAuthor().trim().length() > 60) {
-            throw new IllegalArgumentException("Author must be between 2 and 60 characters.");
+        if (book.getAuthor() == null || book.getAuthor().trim().length() < Constants.AUTHOR_MIN_LENGTH || book.getAuthor().trim().length() > Constants.AUTHOR_MAX_LENGTH) {
+            throw new IllegalArgumentException("Author must be between " + Constants.AUTHOR_MIN_LENGTH + " and " + Constants.AUTHOR_MAX_LENGTH + " characters.");
         }
-        // Regex allows letters, spaces, dots, apostrophes, and hyphens
         if (!book.getAuthor().matches("^[a-zA-Z\\s\\.'\\-]+$")) {
             throw new IllegalArgumentException("Author contains invalid characters.");
         }
@@ -28,8 +23,8 @@ public class BookValidator {
         }
 
         // 4. Total Pages Validation
-        if (book.getTotalPages() < 1 || book.getTotalPages() > 10000) {
-            throw new IllegalArgumentException("Total pages must be between 1 and 10,000.");
+        if (book.getTotalPages() < Constants.MIN_PAGES || book.getTotalPages() > Constants.MAX_PAGES) {
+            throw new IllegalArgumentException("Total pages must be between " + Constants.MIN_PAGES + " and " + Constants.MAX_PAGES + ".");
         }
 
         // 5. Pages Read Validation
@@ -46,8 +41,8 @@ public class BookValidator {
         }
 
         // 7. Description Validation
-        if (book.getDescription() != null && book.getDescription().length() > 500) {
-            throw new IllegalArgumentException("Description cannot exceed 500 characters.");
+        if (book.getDescription() != null && book.getDescription().length() > Constants.DESCRIPTION_MAX_LENGTH) {
+            throw new IllegalArgumentException("Description cannot exceed " + Constants.DESCRIPTION_MAX_LENGTH + " characters.");
         }
     }
 }

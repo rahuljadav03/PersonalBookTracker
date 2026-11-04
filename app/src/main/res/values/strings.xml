@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">Personal Book Tracker</string>
+
+    <!-- Dashboard -->
+    <string name="title_dashboard">My Books</string>
+    <string name="action_add_book">Add Book</string>
+
+    <!-- Add/Edit Book -->
+    <string name="title_add_book">Add New Book</string>
+    <string name="title_edit_book">Edit Book</string>
+    <string name="hint_title">Book Title</string>
+    <string name="hint_author">Author</string>
+    <string name="hint_category">Category</string>
+    <string name="hint_total_pages">Total Pages</string>
+    <string name="hint_pages_read">Pages Read</string>
+    <string name="hint_status">Status</string>
+    <string name="hint_description">Description (Optional)</string>
+    <string name="action_save">Save</string>
+
+    <!-- Details/List -->
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+
+    <!-- Errors -->
+    <string name="error_required">This field is required</string>
+    <string name="error_invalid_length">Invalid length</string>
 </resources>
