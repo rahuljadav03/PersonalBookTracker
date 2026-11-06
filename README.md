@@ -113,25 +113,46 @@ Validation runs across three distinct layers to ensure complete data integrity:
 ```
 PersonalBookTracker/
 ├── app/
-│   ├── build.gradle.kts          # App-level build configuration and dependencies
+│   ├── build.gradle.kts
+│   ├── proguard-rules.pro
 │   └── src/
 │       ├── main/
-│       │   ├── AndroidManifest.xml # App manifest and activity declarations
+│       │   ├── AndroidManifest.xml
 │       │   ├── java/com/example/booktracker/
-│       │   │   ├── MainActivity.java        # Main dashboard screen
-│       │   │   ├── AddBookActivity.java     # Add book screen
-│       │   │   ├── BookListActivity.java    # Library list screen with search/filters
-│       │   │   ├── BookDetailActivity.java  # Book details and inline edit panel
-│       │   │   ├── StatisticsActivity.java  # Reading analytics screen
-│       │   │   ├── adapter/BookAdapter.java # RecyclerView adapter for book cards
-│       │   │   ├── database/DatabaseHelper.java # SQLite database manager
-│       │   │   ├── model/Book.java          # Book data model
-│       │   │   └── utils/                   # Validation, IST date utils, constants
-│       │   └── res/                         # XML layouts, drawables, strings, colors
-│       ├── test/                        # Local JUnit 4 unit tests
-│       └── androidTest/                 # Instrumented Espresso and database tests
-├── build.gradle.kts                     # Root-level Gradle build file
-└── README.md                            # Project documentation
+│       │   │   ├── MainActivity.java          # Dashboard
+│       │   │   ├── AddBookActivity.java       # Add a new book
+│       │   │   ├── BookListActivity.java      # Book list, search, filter, sort
+│       │   │   ├── BookDetailActivity.java    # View, edit and delete a book
+│       │   │   ├── StatisticsActivity.java    # Reading statistics
+│       │   │   ├── adapter/
+│       │   │   │   └── BookAdapter.java       # Shows books in RecyclerView
+│       │   │   ├── database/
+│       │   │   │   └── DatabaseHelper.java    # SQLite create and CRUD operations
+│       │   │   ├── model/
+│       │   │   │   └── Book.java              # Book data class
+│       │   │   └── utils/
+│       │   │       ├── BookValidator.java     # Input validation rules
+│       │   │       ├── Constants.java         # Categories, status values, limits
+│       │   │       ├── DateTimeUtils.java     # IST 12-hour date and time format
+│       │   │       ├── InsetsHelper.java      # Screen margin / system bar handling
+│       │   │       └── ValidationResult.java  # Validation result holder
+│       │   └── res/
+│       │       ├── drawable/                  # Icons and images
+│       │       ├── layout/                    # XML screen layouts
+│       │       ├── values/                    # Colors, strings, themes, dimensions
+│       │       └── values-night/              # Dark mode values
+│       ├── test/java/com/example/booktracker/
+│       │   └── utils/
+│       │       ├── BookValidatorTest.java     # Unit tests for validation
+│       │       └── DateTimeUtilsTest.java     # Unit tests for date and time
+│       └── androidTest/java/com/example/booktracker/
+│           ├── database/
+│           │   └── DatabaseHelperTest.java    # Database tests
+│           └── ui/
+│               └── AppUiTest.java             # Screen (Espresso) tests
+├── build.gradle.kts
+├── gradle.properties
+└── README.md
 ```
 
 ---
