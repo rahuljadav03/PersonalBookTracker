@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,7 @@ import com.example.booktracker.databinding.ActivityBookDetailsBinding;
 import com.example.booktracker.model.Book;
 import com.example.booktracker.utils.BookValidator;
 import com.example.booktracker.utils.Constants;
+import com.example.booktracker.utils.InsetsHelper;
 import com.example.booktracker.utils.ValidationResult;
 
 import java.text.SimpleDateFormat;
@@ -49,9 +51,12 @@ public class BookDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         binding = ActivityBookDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        InsetsHelper.applySystemBarInsets(binding.getRoot());
 
         dbHelper = new DatabaseHelper(this);
 

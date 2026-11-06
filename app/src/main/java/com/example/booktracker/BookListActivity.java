@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.example.booktracker.database.DatabaseHelper;
 import com.example.booktracker.databinding.ActivityBookListBinding;
 import com.example.booktracker.model.Book;
 import com.example.booktracker.utils.Constants;
+import com.example.booktracker.utils.InsetsHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,9 +58,12 @@ public class BookListActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         binding = ActivityBookListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        InsetsHelper.applySystemBarInsets(binding.getRoot());
 
         dbHelper = new DatabaseHelper(this);
 

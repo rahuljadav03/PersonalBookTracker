@@ -38,12 +38,14 @@
         <!-- Book Library List Activity -->
         <activity
             android:name=".BookListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- Book Details Activity -->
         <activity
             android:name=".BookDetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- Reading Statistics Activity -->
         <activity

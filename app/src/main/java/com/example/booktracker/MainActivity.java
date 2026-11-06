@@ -3,6 +3,7 @@ package com.example.booktracker;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -11,6 +12,7 @@ import com.example.booktracker.database.DatabaseHelper;
 import com.example.booktracker.databinding.ActivityMainBinding;
 import com.example.booktracker.model.Book;
 import com.example.booktracker.utils.Constants;
+import com.example.booktracker.utils.InsetsHelper;
 
 import java.util.List;
 
@@ -22,9 +24,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        InsetsHelper.applySystemBarInsets(binding.getRoot());
 
         dbHelper = new DatabaseHelper(this);
 
