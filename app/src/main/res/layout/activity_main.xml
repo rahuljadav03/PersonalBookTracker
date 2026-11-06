@@ -11,249 +11,264 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="88dp">
+        android:paddingBottom="@dimen/list_bottom_padding">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_height="wrap_content">
 
-            <!-- Title Header -->
-            <TextView
-                android:id="@+id/tv_dashboard_title"
+            <!-- Max Width Container for Large Screen/Tablet Centering -->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/title_dashboard"
-                android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                android:textStyle="bold"
+                android:padding="@dimen/screen_horizontal_margin"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_max="@dimen/content_max_width">
 
-            <TextView
-                android:id="@+id/tv_dashboard_subtitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/dashboard_welcome"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_dashboard_title" />
-
-            <!-- Dashboard Summary Cards Grid -->
-            <!-- Card 1: Total Books -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_total_books"
-                style="@style/Widget.Material3.CardView.Filled"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintEnd_toStartOf="@id/card_reading"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_dashboard_subtitle">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Title Header -->
+                <TextView
+                    android:id="@+id/tv_dashboard_title"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:text="@string/title_dashboard"
+                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/stat_total_books"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
-
-                    <TextView
-                        android:id="@+id/tv_total_books_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="0"
-                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Card 2: Reading -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_reading"
-                style="@style/Widget.Material3.CardView.Filled"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toEndOf="@id/card_total_books"
-                app:layout_constraintTop_toBottomOf="@id/tv_dashboard_subtitle">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_dashboard_subtitle"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginTop="@dimen/space_xs"
+                    android:text="@string/dashboard_welcome"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_dashboard_title" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/stat_reading"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
-
-                    <TextView
-                        android:id="@+id/tv_reading_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="0"
-                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Card 3: Want to Read -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_want_to_read"
-                style="@style/Widget.Material3.CardView.Filled"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="8dp"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintEnd_toStartOf="@id/card_completed"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_total_books">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Dashboard Summary 2-Column Grid -->
+                <!-- Card 1: Total Books -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_total_books"
+                    style="@style/Widget.Material3.CardView.Filled"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginTop="@dimen/space_md"
+                    android:layout_marginEnd="@dimen/space_xs"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="@dimen/card_elevation"
+                    app:layout_constraintEnd_toStartOf="@id/card_reading"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_dashboard_subtitle">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/stat_want_to_read"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        android:minHeight="@dimen/min_touch_target_size"
+                        android:orientation="vertical"
+                        android:padding="@dimen/space_md">
 
-                    <TextView
-                        android:id="@+id/tv_want_to_read_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="0"
-                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stat_total_books"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <!-- Card 4: Completed -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_completed"
-                style="@style/Widget.Material3.CardView.Filled"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toEndOf="@id/card_want_to_read"
-                app:layout_constraintTop_toBottomOf="@id/card_reading">
+                        <TextView
+                            android:id="@+id/tv_total_books_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_sm"
+                            android:text="0"
+                            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <!-- Card 2: Reading -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_reading"
+                    style="@style/Widget.Material3.CardView.Filled"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_marginStart="@dimen/space_xs"
+                    android:layout_marginTop="@dimen/space_md"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="@dimen/card_elevation"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toEndOf="@id/card_total_books"
+                    app:layout_constraintTop_toBottomOf="@id/tv_dashboard_subtitle">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/stat_completed"
-                        android:textAppearance="?attr/textAppearanceLabelMedium"
-                        android:textColor="?attr/colorOnSurfaceVariant" />
+                        android:minHeight="@dimen/min_touch_target_size"
+                        android:orientation="vertical"
+                        android:padding="@dimen/space_md">
 
-                    <TextView
-                        android:id="@+id/tv_completed_count"
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stat_reading"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <TextView
+                            android:id="@+id/tv_reading_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_sm"
+                            android:text="0"
+                            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Card 3: Want to Read -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_want_to_read"
+                    style="@style/Widget.Material3.CardView.Filled"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:layout_marginEnd="@dimen/space_xs"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="@dimen/card_elevation"
+                    app:layout_constraintEnd_toStartOf="@id/card_completed"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_total_books">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="0"
-                        android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        android:minHeight="@dimen/min_touch_target_size"
+                        android:orientation="vertical"
+                        android:padding="@dimen/space_md">
 
-            <!-- Navigation Buttons -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_view_all_books"
-                style="@style/Widget.Material3.Button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="6dp"
-                android:minHeight="48dp"
-                android:text="@string/action_view_all"
-                app:icon="@drawable/ic_book"
-                app:layout_constraintEnd_toStartOf="@id/btn_view_statistics"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/card_want_to_read" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stat_want_to_read"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_view_statistics"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_marginTop="20dp"
-                android:minHeight="48dp"
-                android:text="@string/action_view_statistics"
-                app:icon="@drawable/ic_stats"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toEndOf="@id/btn_view_all_books"
-                app:layout_constraintTop_toBottomOf="@id/card_completed" />
+                        <TextView
+                            android:id="@+id/tv_want_to_read_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_sm"
+                            android:text="0"
+                            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-            <!-- Recent Books Section -->
-            <TextView
-                android:id="@+id/tv_section_recent"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="@string/section_recent_books"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_view_all_books" />
+                <!-- Card 4: Completed -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_completed"
+                    style="@style/Widget.Material3.CardView.Filled"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_xs"
+                    android:layout_marginTop="@dimen/space_sm"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="@dimen/card_elevation"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toEndOf="@id/card_want_to_read"
+                    app:layout_constraintTop_toBottomOf="@id/card_reading">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_recent_books"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:nestedScrollingEnabled="false"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_section_recent"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_book" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="@dimen/min_touch_target_size"
+                        android:orientation="vertical"
+                        android:padding="@dimen/space_md">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/stat_completed"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant" />
+
+                        <TextView
+                            android:id="@+id/tv_completed_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/space_sm"
+                            android:text="0"
+                            android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Navigation Buttons -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_all_books"
+                    style="@style/Widget.Material3.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:layout_marginEnd="@dimen/space_xs"
+                    android:minHeight="@dimen/button_height"
+                    android:text="@string/action_view_all"
+                    app:icon="@drawable/ic_book"
+                    app:layout_constraintEnd_toStartOf="@id/btn_view_statistics"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_want_to_read" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_view_statistics"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/space_xs"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:minHeight="@dimen/button_height"
+                    android:text="@string/action_view_statistics"
+                    app:icon="@drawable/ic_stats"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_weight="1"
+                    app:layout_constraintStart_toEndOf="@id/btn_view_all_books"
+                    app:layout_constraintTop_toBottomOf="@id/card_completed" />
+
+                <!-- Recent Books Section -->
+                <TextView
+                    android:id="@+id/tv_section_recent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_lg"
+                    android:text="@string/section_recent_books"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/btn_view_all_books" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_recent_books"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/space_sm"
+                    android:nestedScrollingEnabled="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_section_recent"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_book" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
@@ -264,8 +279,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/screen_horizontal_margin"
         android:contentDescription="@string/cd_add_book"
+        android:minHeight="@dimen/min_touch_target_size"
         android:text="@string/action_add_book"
         app:icon="@drawable/ic_add" />
 
