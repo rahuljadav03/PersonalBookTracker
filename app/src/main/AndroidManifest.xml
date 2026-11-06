@@ -12,22 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PersonalBookTracker">
 
-        <!-- Splash Activity (Launcher) -->
+        <!-- Main Dashboard Activity (Launcher Activity) -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.PersonalBookTracker">
+            android:theme="@style/Theme.PersonalBookTracker.Starting"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- Main Dashboard Activity -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
 
         <!-- Form Add/Edit Book Activity -->
         <activity
