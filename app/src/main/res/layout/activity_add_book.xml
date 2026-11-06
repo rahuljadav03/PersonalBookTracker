@@ -5,219 +5,230 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".MainActivity">
+    tools:context=".AddBookActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <!-- Header Title -->
-        <TextView
-            android:id="@+id/tv_form_title"
+        <!-- Max Width Container for Form on Large Screens/Tablets -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/title_add_book"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            android:textStyle="bold"
+            android:padding="@dimen/screen_horizontal_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="@dimen/content_max_width">
 
-        <!-- 1. Title Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_title"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:hint="@string/hint_title"
-            app:counterEnabled="true"
-            app:counterMaxLength="100"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_form_title">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_title"
-                android:layout_width="match_parent"
+            <!-- Header Title -->
+            <TextView
+                android:id="@+id/tv_form_title"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="textCapWords"
-                android:maxLength="100"
-                android:minHeight="48dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="@string/title_add_book"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 2. Author Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_author"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/hint_author"
-            app:counterEnabled="true"
-            app:counterMaxLength="60"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_title">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_author"
-                android:layout_width="match_parent"
+            <!-- 1. Title Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_title"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="textCapWords"
-                android:maxLength="60"
-                android:minHeight="48dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="@dimen/space_md"
+                android:hint="@string/hint_title"
+                app:counterEnabled="true"
+                app:counterMaxLength="100"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_form_title">
 
-        <!-- 3. Category Exposed Dropdown -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_category"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/hint_category"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_author">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords"
+                    android:maxLength="100"
+                    android:minHeight="@dimen/min_touch_target_size" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/actv_category"
-                android:layout_width="match_parent"
+            <!-- 2. Author Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_author"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="none"
-                android:minHeight="48dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="@dimen/space_sm"
+                android:hint="@string/hint_author"
+                app:counterEnabled="true"
+                app:counterMaxLength="60"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_title">
 
-        <!-- 4. Total Pages Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_total_pages"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:hint="@string/hint_total_pages"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toStartOf="@id/til_pages_read"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_category">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords"
+                    android:maxLength="60"
+                    android:minHeight="@dimen/min_touch_target_size" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_total_pages"
-                android:layout_width="match_parent"
+            <!-- 3. Category Exposed Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_category"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="number"
-                android:maxLength="5"
-                android:minHeight="48dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="@dimen/space_sm"
+                android:hint="@string/hint_category"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_author">
 
-        <!-- 5. Pages Read Input -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_pages_read"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:hint="@string/hint_pages_read"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@id/til_total_pages"
-            app:layout_constraintTop_toBottomOf="@id/til_category">
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/actv_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:minHeight="@dimen/min_touch_target_size" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_pages_read"
-                android:layout_width="match_parent"
+            <!-- 4. Total Pages Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_total_pages"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:imeOptions="actionNext"
-                android:inputType="number"
-                android:maxLength="5"
-                android:minHeight="48dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="@dimen/space_sm"
+                android:layout_marginEnd="@dimen/space_xs"
+                android:hint="@string/hint_total_pages"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toStartOf="@id/til_pages_read"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_category">
 
-        <!-- 6. Status Exposed Dropdown -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_status"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/hint_status"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_total_pages">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_total_pages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:minHeight="@dimen/min_touch_target_size" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.MaterialAutoCompleteTextView
-                android:id="@+id/actv_status"
-                android:layout_width="match_parent"
+            <!-- 5. Pages Read Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_pages_read"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:inputType="none"
-                android:minHeight="48dp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginStart="@dimen/space_xs"
+                android:layout_marginTop="@dimen/space_sm"
+                android:hint="@string/hint_pages_read"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/til_total_pages"
+                app:layout_constraintTop_toBottomOf="@id/til_category">
 
-        <!-- 7. Description Input (with counterEnabled=true) -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/til_description"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="@string/hint_description"
-            app:counterEnabled="true"
-            app:counterMaxLength="500"
-            app:errorEnabled="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_status">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_pages_read"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionNext"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:minHeight="@dimen/min_touch_target_size" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_description"
-                android:layout_width="match_parent"
+            <!-- 6. Status Exposed Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_status"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="top|start"
-                android:imeOptions="actionDone"
-                android:inputType="textMultiLine"
-                android:maxLength="500"
-                android:minHeight="96dp"
-                android:minLines="3" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginTop="@dimen/space_sm"
+                android:hint="@string/hint_status"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_total_pages">
 
-        <!-- Save Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_save_book"
-            style="@style/Widget.Material3.Button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:minHeight="48dp"
-            android:text="@string/action_save"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_description" />
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/actv_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:minHeight="@dimen/min_touch_target_size" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Cancel Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_cancel"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:minHeight="48dp"
-            android:text="@string/action_cancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_save_book" />
+            <!-- 7. Description Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_description"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:hint="@string/hint_description"
+                app:counterEnabled="true"
+                app:counterMaxLength="500"
+                app:errorEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_status">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top|start"
+                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
+                    android:maxLength="500"
+                    android:minHeight="96dp"
+                    android:minLines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_book"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_lg"
+                android:minHeight="@dimen/button_height"
+                android:text="@string/action_save"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/til_description" />
+
+            <!-- Cancel Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_cancel"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_sm"
+                android:minHeight="@dimen/button_height"
+                android:text="@string/action_cancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_save_book" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
