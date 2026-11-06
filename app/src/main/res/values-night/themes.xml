@@ -2,6 +2,7 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.PersonalBookTracker" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
+        <item name="linearProgressIndicatorStyle">@style/Widget.App.LinearProgressIndicator</item>
     </style>
 
     <!-- Starting Theme for AndroidX SplashScreen API (Dark Mode) -->

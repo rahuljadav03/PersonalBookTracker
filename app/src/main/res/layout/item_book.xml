@@ -101,11 +101,12 @@
             app:layout_constraintBottom_toBottomOf="@id/chip_item_category"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/chip_item_category"
-            app:tint="?attr/colorError" />
+            app:tint="@color/delete_red" />
 
         <!-- Progress Indicator -->
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress_item_pages"
+            style="@style/Widget.App.LinearProgressIndicator"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
@@ -114,6 +115,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/chip_item_category"
             app:trackCornerRadius="@dimen/space_xs"
+            app:trackStopIndicatorSize="0dp"
             app:trackThickness="6dp" />
 
         <!-- Progress Text -->

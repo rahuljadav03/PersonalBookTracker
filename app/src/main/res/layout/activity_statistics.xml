@@ -230,11 +230,13 @@
 
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/progress_stat_completed"
+                        style="@style/Widget.App.LinearProgressIndicator"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_xs"
                         android:progress="42"
                         app:trackCornerRadius="@dimen/space_xs"
+                        app:trackStopIndicatorSize="0dp"
                         app:trackThickness="8dp" />
 
                     <!-- Reading Status Progress -->
@@ -248,11 +250,13 @@
 
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/progress_stat_reading"
+                        style="@style/Widget.App.LinearProgressIndicator"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_xs"
                         android:progress="25"
                         app:trackCornerRadius="@dimen/space_xs"
+                        app:trackStopIndicatorSize="0dp"
                         app:trackThickness="8dp" />
 
                     <!-- Want to Read Status Progress -->
@@ -266,11 +270,13 @@
 
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/progress_stat_want_to_read"
+                        style="@style/Widget.App.LinearProgressIndicator"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/space_xs"
                         android:progress="33"
                         app:trackCornerRadius="@dimen/space_xs"
+                        app:trackStopIndicatorSize="0dp"
                         app:trackThickness="8dp" />
 
                 </LinearLayout>

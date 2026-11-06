@@ -14,6 +14,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.booktracker.adapter.BookAdapter;
@@ -106,14 +107,15 @@ public class BookListActivity extends AppCompatActivity {
             @Override
             public void onBookClick(Book book) {
                 Intent intent = new Intent(BookListActivity.this, BookDetailActivity.class);
-                intent.putExtra("book_id", book.getId());
+                intent.putExtra(Constants.EXTRA_BOOK_ID, book.getId());
                 startActivity(intent);
             }
 
             @Override
             public void onEditClick(Book book) {
-                Intent intent = new Intent(BookListActivity.this, AddBookActivity.class);
-                intent.putExtra("book_id", book.getId());
+                Intent intent = new Intent(BookListActivity.this, BookDetailActivity.class);
+                intent.putExtra(Constants.EXTRA_BOOK_ID, book.getId());
+                intent.putExtra(Constants.EXTRA_EDIT_MODE, true);
                 startActivity(intent);
             }
 
@@ -128,7 +130,6 @@ public class BookListActivity extends AppCompatActivity {
     }
 
     private void setupFiltersAndSearch() {
-        // Search text watcher with 300ms debounce
         binding.etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -144,7 +145,6 @@ public class BookListActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-        // Filter chips
         binding.cgStatusFilter.setOnCheckedStateChangeListener((group, checkedIds) -> {
             if (checkedIds.isEmpty()) {
                 currentStatusFilter = "ALL";
@@ -227,7 +227,6 @@ public class BookListActivity extends AppCompatActivity {
         binding.btnEmptyAddBook.setOnClickListener(v -> {
             int totalInDb = dbHelper.getTotalBooksCount();
             if (totalInDb > 0) {
-                // Clear search & filters CTA button
                 binding.etSearch.setText("");
                 binding.cgStatusFilter.check(R.id.chip_filter_all);
                 binding.actvSort.setText(sortOptions.get(0), false);
@@ -236,7 +235,6 @@ public class BookListActivity extends AppCompatActivity {
                 currentSortBy = "RECENT";
                 loadBooksFromDatabase();
             } else {
-                // Add first book CTA button
                 Intent intent = new Intent(BookListActivity.this, AddBookActivity.class);
                 startActivity(intent);
             }
@@ -259,11 +257,9 @@ public class BookListActivity extends AppCompatActivity {
             binding.layoutEmptyState.setVisibility(View.VISIBLE);
 
             if (totalInDb == 0) {
-                // Empty Library State
                 binding.btnEmptyAddBook.setText(R.string.empty_state_button);
                 binding.btnEmptyAddBook.setIconResource(R.drawable.ic_add);
             } else {
-                // No Search/Filter Results Found State
                 binding.btnEmptyAddBook.setText(R.string.no_results_button);
                 binding.btnEmptyAddBook.setIconResource(R.drawable.ic_search);
             }
@@ -274,10 +270,10 @@ public class BookListActivity extends AppCompatActivity {
     }
 
     private void showDeleteConfirmationDialog(Book book) {
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Delete Book")
                 .setMessage("Are you sure you want to delete \"" + book.getTitle() + "\"?")
-                .setPositiveButton("Delete", (dialog, which) -> {
+                .setPositiveButton("Delete", (d, which) -> {
                     executorService.execute(() -> {
                         dbHelper.deleteBook(book.getId());
                         mainHandler.post(() -> {
@@ -287,6 +283,13 @@ public class BookListActivity extends AppCompatActivity {
                     });
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(BookListActivity.this, R.color.delete_red));
+        });
+
+        dialog.show();
     }
 }

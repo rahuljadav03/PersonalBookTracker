@@ -17,6 +17,9 @@
         <!-- System bar appearance on Android 15 (API 35+) -->
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowLightNavigationBar">true</item>
+
+        <!-- Default LinearProgressIndicator style without stop indicator dot -->
+        <item name="linearProgressIndicatorStyle">@style/Widget.App.LinearProgressIndicator</item>
     </style>
 
     <style name="Theme.PersonalBookTracker" parent="Base.Theme.PersonalBookTracker" />

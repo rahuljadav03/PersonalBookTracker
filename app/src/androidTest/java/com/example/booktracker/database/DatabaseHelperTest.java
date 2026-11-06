@@ -108,6 +108,7 @@ public class DatabaseHelperTest {
         Book updated = dbHelper.getBookById(id);
         assertEquals("Updated Title", updated.getTitle());
         assertEquals(150, updated.getPagesRead());
+        assertEquals("Created_at must remain unchanged after edit", inserted.getCreatedAt(), updated.getCreatedAt());
         assertTrue("Updated timestamp should be greater than initial", updated.getUpdatedAt() > initialUpdatedAt);
     }
 

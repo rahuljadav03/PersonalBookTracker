@@ -99,14 +99,17 @@ public class StatisticsActivity extends AppCompatActivity {
         binding.tvStatCompletionRate.setText(completionRate + "%");
         binding.tvStatAvgPages.setText(String.valueOf(avgPages));
 
-        // Reading Status Breakdown & Progress Bar Visualizations
+        // Reading Status Breakdown & Progress Bar Visualizations (remove stop indicator dot)
         binding.tvStatCompletedText.setText("Completed: " + completedCount + " books (" + completionRate + "%)");
+        binding.progressStatCompleted.setTrackStopIndicatorSize(0);
         binding.progressStatCompleted.setProgress(completionRate);
 
         binding.tvStatReadingText.setText("Currently Reading: " + readingCount + " books (" + readingRate + "%)");
+        binding.progressStatReading.setTrackStopIndicatorSize(0);
         binding.progressStatReading.setProgress(readingRate);
 
         binding.tvStatWantToReadText.setText("Want to Read: " + wantToReadCount + " books (" + wantToReadRate + "%)");
+        binding.progressStatWantToRead.setTrackStopIndicatorSize(0);
         binding.progressStatWantToRead.setProgress(wantToReadRate);
 
         // Category Distribution Breakdown

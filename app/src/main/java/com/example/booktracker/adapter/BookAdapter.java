@@ -119,6 +119,7 @@ public class BookAdapter extends ListAdapter<Book, BookAdapter.BookViewHolder> {
             int totalPages = book.getTotalPages();
             int pagesRead = book.getPagesRead();
 
+            binding.progressItemPages.setTrackStopIndicatorSize(0);
             if (totalPages > 0) {
                 int progressPercent = (int) (((double) pagesRead / totalPages) * 100);
                 binding.progressItemPages.setProgress(progressPercent);

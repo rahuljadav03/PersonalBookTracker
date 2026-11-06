@@ -134,11 +134,13 @@
 
                         <com.google.android.material.progressindicator.LinearProgressIndicator
                             android:id="@+id/progress_detail_pages"
+                            style="@style/Widget.App.LinearProgressIndicator"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/space_sm"
                             android:progress="50"
                             app:trackCornerRadius="@dimen/space_xs"
+                            app:trackStopIndicatorSize="0dp"
                             app:trackThickness="8dp" />
 
                         <TextView
@@ -149,15 +151,6 @@
                             android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="90 of 180 pages (50%)" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_update_progress"
-                            style="@style/Widget.Material3.Button.TonalButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/space_sm"
-                            android:minHeight="@dimen/button_height"
-                            android:text="@string/action_update_progress" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -214,7 +207,7 @@
                             android:layout_height="wrap_content"
                             android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            tools:text="Added On: Jan 15, 2025" />
+                            tools:text="Added on: 06 Nov 2026, 03:45 PM" />
 
                         <TextView
                             android:id="@+id/tv_detail_updated_at"
@@ -223,39 +216,45 @@
                             android:layout_marginTop="@dimen/space_xs"
                             android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="?attr/colorOnSurfaceVariant"
-                            tools:text="Last Updated: Jan 20, 2025" />
+                            tools:text="Last updated: 06 Nov 2026, 06:10 PM" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- View Mode Action Buttons -->
+                <!-- View Mode Action Buttons (Edit Book, Delete Book, Back) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/space_lg"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_edit_book"
                         style="@style/Widget.Material3.Button"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/space_xs"
-                        android:layout_weight="1"
                         android:minHeight="@dimen/button_height"
                         android:text="@string/action_edit"
                         app:icon="@drawable/ic_edit" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_delete_book"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="0dp"
+                        style="@style/Widget.App.Button.Delete"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/space_xs"
-                        android:layout_weight="1"
+                        android:layout_marginTop="@dimen/space_sm"
                         android:minHeight="@dimen/button_height"
                         android:text="@string/action_delete"
                         app:icon="@drawable/ic_delete" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_back_to_dashboard"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/space_sm"
+                        android:minHeight="@dimen/button_height"
+                        android:text="@string/action_back"
+                        app:icon="@drawable/ic_arrow_back" />
                 </LinearLayout>
 
             </LinearLayout>

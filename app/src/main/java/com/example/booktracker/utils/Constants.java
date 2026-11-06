@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Constants {
+    // Intent Extra Keys
+    public static final String EXTRA_BOOK_ID = "book_id";
+    public static final String EXTRA_EDIT_MODE = "edit_mode";
+
     // Book Statuses
     public static final String STATUS_WANT_TO_READ = "WANT_TO_READ";
     public static final String STATUS_READING = "READING";
