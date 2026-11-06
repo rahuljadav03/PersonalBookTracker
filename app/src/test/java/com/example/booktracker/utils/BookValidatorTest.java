@@ -457,6 +457,23 @@ public class BookValidatorTest {
     }
 
     @Test
+    public void testAuthor_Emoji_Invalid() {
+        Book book = createValidBook();
+        book.setAuthor("Author 📚");
+        ValidationResult result = BookValidator.validate(book);
+        assertFalse("Author with emoji should be invalid", result.isValid());
+        assertEquals("Author contains invalid characters.", result.getError("author"));
+    }
+
+    @Test
+    public void testTitle_Emoji_Valid() {
+        Book book = createValidBook();
+        book.setTitle("Book 📚");
+        ValidationResult result = BookValidator.validate(book);
+        assertTrue("Title with emoji should be valid", result.isValid());
+    }
+
+    @Test
     public void testMultipleErrors() {
         Book book = new Book();
         book.setTitle("A"); // Invalid: length 1
