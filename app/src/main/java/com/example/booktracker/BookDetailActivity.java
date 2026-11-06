@@ -1,43 +1,58 @@
 package com.example.booktracker;
 
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.booktracker.database.DatabaseHelper;
 import com.example.booktracker.databinding.ActivityBookDetailsBinding;
 import com.example.booktracker.model.Book;
 import com.example.booktracker.utils.BookValidator;
 import com.example.booktracker.utils.Constants;
+import com.example.booktracker.utils.DateTimeUtils;
 import com.example.booktracker.utils.InsetsHelper;
 import com.example.booktracker.utils.ValidationResult;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BookDetailActivity extends AppCompatActivity {
+
+    private static final String KEY_IS_EDIT_MODE = "KEY_IS_EDIT_MODE";
+    private static final String KEY_EDIT_TITLE = "KEY_EDIT_TITLE";
+    private static final String KEY_EDIT_AUTHOR = "KEY_EDIT_AUTHOR";
+    private static final String KEY_EDIT_CATEGORY = "KEY_EDIT_CATEGORY";
+    private static final String KEY_EDIT_TOTAL_PAGES = "KEY_EDIT_TOTAL_PAGES";
+    private static final String KEY_EDIT_PAGES_READ = "KEY_EDIT_PAGES_READ";
+    private static final String KEY_EDIT_STATUS = "KEY_EDIT_STATUS";
+    private static final String KEY_EDIT_DESCRIPTION = "KEY_EDIT_DESCRIPTION";
 
     private ActivityBookDetailsBinding binding;
     private DatabaseHelper dbHelper;
     private Book currentBook;
     private long bookId = -1;
     private boolean isEditMode = false;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private static final String STATUS_LABEL_WANT_TO_READ = "Want to Read";
     private static final String STATUS_LABEL_READING = "Reading";
@@ -60,19 +75,17 @@ public class BookDetailActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
-        bookId = getIntent().getLongExtra("book_id", -1);
+        bookId = getIntent().getLongExtra(Constants.EXTRA_BOOK_ID, -1);
         if (bookId == -1) {
             Toast.makeText(this, "Book not found", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        loadBookDetails();
-
-        if (currentBook == null) {
-            Toast.makeText(this, "Book not found or has been deleted", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+        if (savedInstanceState != null) {
+            isEditMode = savedInstanceState.getBoolean(KEY_IS_EDIT_MODE, false);
+        } else {
+            isEditMode = getIntent().getBooleanExtra(Constants.EXTRA_EDIT_MODE, false);
         }
 
         setupDropdowns();
@@ -80,21 +93,80 @@ public class BookDetailActivity extends AppCompatActivity {
         setupClickListeners();
         setupBackPressedHandler();
 
-        if (getIntent().getBooleanExtra("edit_mode", false)) {
-            enterEditMode();
-        } else {
-            enterViewMode();
+        loadBookDetailsAndInitialize(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_IS_EDIT_MODE, isEditMode);
+        if (isEditMode) {
+            outState.putString(KEY_EDIT_TITLE, binding.etTitle.getText().toString());
+            outState.putString(KEY_EDIT_AUTHOR, binding.etAuthor.getText().toString());
+            outState.putString(KEY_EDIT_CATEGORY, binding.actvCategory.getText().toString());
+            outState.putString(KEY_EDIT_TOTAL_PAGES, binding.etTotalPages.getText().toString());
+            outState.putString(KEY_EDIT_PAGES_READ, binding.etPagesRead.getText().toString());
+            outState.putString(KEY_EDIT_STATUS, binding.actvStatus.getText().toString());
+            outState.putString(KEY_EDIT_DESCRIPTION, binding.etDescription.getText().toString());
         }
     }
 
-    private void loadBookDetails() {
-        currentBook = dbHelper.getBookById(bookId);
-        if (currentBook != null) {
-            populateViewModeData();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
+    }
+
+    private void loadBookDetailsAndInitialize(Bundle savedInstanceState) {
+        executorService.execute(() -> {
+            currentBook = dbHelper.getBookById(bookId);
+            mainHandler.post(() -> {
+                if (currentBook == null) {
+                    Toast.makeText(BookDetailActivity.this, "Book not found or has been deleted", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                if (isEditMode) {
+                    enterEditMode();
+                    if (savedInstanceState != null) {
+                        restoreEditedFieldsFromSavedState(savedInstanceState);
+                    }
+                } else {
+                    enterViewMode();
+                }
+            });
+        });
+    }
+
+    private void restoreEditedFieldsFromSavedState(Bundle savedState) {
+        if (savedState.containsKey(KEY_EDIT_TITLE)) {
+            binding.etTitle.setText(savedState.getString(KEY_EDIT_TITLE, ""));
         }
+        if (savedState.containsKey(KEY_EDIT_AUTHOR)) {
+            binding.etAuthor.setText(savedState.getString(KEY_EDIT_AUTHOR, ""));
+        }
+        if (savedState.containsKey(KEY_EDIT_CATEGORY)) {
+            binding.actvCategory.setText(savedState.getString(KEY_EDIT_CATEGORY, ""), false);
+        }
+        if (savedState.containsKey(KEY_EDIT_TOTAL_PAGES)) {
+            binding.etTotalPages.setText(savedState.getString(KEY_EDIT_TOTAL_PAGES, ""));
+        }
+        if (savedState.containsKey(KEY_EDIT_PAGES_READ)) {
+            binding.etPagesRead.setText(savedState.getString(KEY_EDIT_PAGES_READ, ""));
+        }
+        if (savedState.containsKey(KEY_EDIT_STATUS)) {
+            binding.actvStatus.setText(savedState.getString(KEY_EDIT_STATUS, ""), false);
+        }
+        if (savedState.containsKey(KEY_EDIT_DESCRIPTION)) {
+            binding.etDescription.setText(savedState.getString(KEY_EDIT_DESCRIPTION, ""));
+        }
+        validateForm(true);
     }
 
     private void populateViewModeData() {
+        if (currentBook == null) return;
+        binding.tvDetailsHeader.setText(R.string.title_book_details);
         binding.tvDetailTitle.setText(currentBook.getTitle());
         binding.tvDetailAuthor.setText("by " + currentBook.getAuthor());
 
@@ -117,6 +189,7 @@ public class BookDetailActivity extends AppCompatActivity {
         int pagesRead = currentBook.getPagesRead();
         int progressPercent = totalPages > 0 ? (int) (((double) pagesRead / totalPages) * 100) : 0;
 
+        binding.progressDetailPages.setTrackStopIndicatorSize(0);
         binding.progressDetailPages.setProgress(progressPercent);
         binding.tvDetailProgressText.setText(pagesRead + " of " + totalPages + " pages (" + progressPercent + "%)");
 
@@ -127,9 +200,8 @@ public class BookDetailActivity extends AppCompatActivity {
             binding.cardDescription.setVisibility(View.GONE);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
-        binding.tvDetailCreatedAt.setText("Added On: " + sdf.format(new Date(currentBook.getCreatedAt())));
-        binding.tvDetailUpdatedAt.setText("Last Updated: " + sdf.format(new Date(currentBook.getUpdatedAt())));
+        binding.tvDetailCreatedAt.setText(getString(R.string.added_on_format, DateTimeUtils.formatIst(currentBook.getCreatedAt())));
+        binding.tvDetailUpdatedAt.setText(getString(R.string.last_updated_format, DateTimeUtils.formatIst(currentBook.getUpdatedAt())));
     }
 
     private void setupDropdowns() {
@@ -222,23 +294,31 @@ public class BookDetailActivity extends AppCompatActivity {
 
         binding.btnSaveBook.setOnClickListener(v -> saveBookUpdate());
         binding.btnDeleteBook.setOnClickListener(v -> showDeleteConfirmationDialog());
-        binding.btnUpdateProgress.setOnClickListener(v -> showQuickProgressUpdateDialog());
+        binding.btnBackToDashboard.setOnClickListener(v -> navigateToDashboard());
     }
 
     private void setupBackPressedHandler() {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (isEditMode && hasUnsavedChanges()) {
-                    showUnsavedChangesDialog(() -> finish());
-                } else if (isEditMode) {
-                    enterViewMode();
-                } else {
-                    setEnabled(false);
-                    getOnBackPressedDispatcher().onBackPressed();
-                }
+                navigateToDashboard();
             }
         });
+    }
+
+    private void navigateToDashboard() {
+        if (isEditMode && hasUnsavedChanges()) {
+            showUnsavedChangesDialog(this::performDashboardNavigation);
+        } else {
+            performDashboardNavigation();
+        }
+    }
+
+    private void performDashboardNavigation() {
+        Intent intent = new Intent(BookDetailActivity.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private void enterViewMode() {
@@ -254,6 +334,9 @@ public class BookDetailActivity extends AppCompatActivity {
         isEditMode = true;
         binding.layoutViewMode.setVisibility(View.GONE);
         binding.layoutEditMode.setVisibility(View.VISIBLE);
+
+        binding.tvDetailsHeader.setText("Edit Book");
+        binding.btnSaveBook.setText("Update Book");
 
         binding.etTitle.setText(currentBook.getTitle());
         binding.etAuthor.setText(currentBook.getAuthor());
@@ -409,6 +492,12 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     private void saveBookUpdate() {
+        if (!hasUnsavedChanges()) {
+            Toast.makeText(this, "No changes to save", Toast.LENGTH_SHORT).show();
+            enterViewMode();
+            return;
+        }
+
         if (!validateForm(true)) {
             Toast.makeText(this, "Please correct the errors in the form.", Toast.LENGTH_SHORT).show();
             return;
@@ -423,113 +512,79 @@ public class BookDetailActivity extends AppCompatActivity {
         String statusCode = mapStatusLabelToCode(statusLabel);
         String description = binding.etDescription.getText().toString().trim();
 
-        // Check for duplicate title & author ignoring current book's own ID
-        if (dbHelper.isDuplicateTitleAndAuthor(title, author, currentBook.getId())) {
-            binding.tilTitle.setError("A book with this title and author already exists.");
-            binding.tilAuthor.setError("A book with this title and author already exists.");
-            Toast.makeText(this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        Book updatedBook = new Book(title, author, category, totalPages, pagesRead, statusCode, description);
-        updatedBook.setId(currentBook.getId());
-        updatedBook.setCreatedAt(currentBook.getCreatedAt());
-
-        ValidationResult validationResult = BookValidator.validate(updatedBook);
-        if (!validationResult.isValid()) {
-            displayValidationErrors(validationResult);
-            Toast.makeText(this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        try {
-            int rowsUpdated = dbHelper.updateBook(updatedBook);
-            if (rowsUpdated > 0) {
-                Toast.makeText(this, "Book updated successfully!", Toast.LENGTH_SHORT).show();
-                loadBookDetails();
-                enterViewMode();
-            } else {
-                Toast.makeText(this, "Failed to update book.", Toast.LENGTH_SHORT).show();
+        executorService.execute(() -> {
+            if (dbHelper.isDuplicateTitleAndAuthor(title, author, currentBook.getId())) {
+                mainHandler.post(() -> {
+                    binding.tilTitle.setError("A book with this title and author already exists.");
+                    binding.tilAuthor.setError("A book with this title and author already exists.");
+                    Toast.makeText(BookDetailActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                });
+                return;
             }
-        } catch (SQLiteConstraintException e) {
-            binding.tilTitle.setError("A book with this title and author already exists.");
-            binding.tilAuthor.setError("A book with this title and author already exists.");
-            Toast.makeText(this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error updating book: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
 
-    private void showQuickProgressUpdateDialog() {
-        if (currentBook == null) return;
+            Book updatedBook = new Book(title, author, category, totalPages, pagesRead, statusCode, description);
+            updatedBook.setId(currentBook.getId());
+            updatedBook.setCreatedAt(currentBook.getCreatedAt());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update Pages Read");
-
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_NUMBER);
-        input.setText(String.valueOf(currentBook.getPagesRead()));
-        input.setSelection(input.getText().length());
-        builder.setView(input);
-
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            String pagesReadStr = input.getText().toString().trim();
-            if (pagesReadStr.isEmpty()) return;
+            ValidationResult validationResult = BookValidator.validate(updatedBook);
+            if (!validationResult.isValid()) {
+                mainHandler.post(() -> {
+                    displayValidationErrors(validationResult);
+                    Toast.makeText(BookDetailActivity.this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
+                });
+                return;
+            }
 
             try {
-                int newPagesRead = Integer.parseInt(pagesReadStr);
-                if (newPagesRead < 0 || newPagesRead > currentBook.getTotalPages()) {
-                    Toast.makeText(this, "Pages read must be between 0 and " + currentBook.getTotalPages(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Automatically adjust status according to cross-field rules
-                String newStatus = currentBook.getStatus();
-                if (newPagesRead == 0) {
-                    newStatus = Constants.STATUS_WANT_TO_READ;
-                } else if (newPagesRead == currentBook.getTotalPages()) {
-                    newStatus = Constants.STATUS_COMPLETED;
-                } else {
-                    newStatus = Constants.STATUS_READING;
-                }
-
-                Book updatedBook = new Book(
-                        currentBook.getTitle(),
-                        currentBook.getAuthor(),
-                        currentBook.getCategory(),
-                        currentBook.getTotalPages(),
-                        newPagesRead,
-                        newStatus,
-                        currentBook.getDescription()
-                );
-                updatedBook.setId(currentBook.getId());
-                updatedBook.setCreatedAt(currentBook.getCreatedAt());
-
-                dbHelper.updateBook(updatedBook);
-                Toast.makeText(this, "Progress updated!", Toast.LENGTH_SHORT).show();
-                loadBookDetails();
-            } catch (NumberFormatException e) {
-                Toast.makeText(this, "Invalid number", Toast.LENGTH_SHORT).show();
+                int rowsUpdated = dbHelper.updateBook(updatedBook);
+                Book reloadedBook = dbHelper.getBookById(currentBook.getId());
+                mainHandler.post(() -> {
+                    if (rowsUpdated > 0 && reloadedBook != null) {
+                        Toast.makeText(BookDetailActivity.this, "Book updated successfully!", Toast.LENGTH_SHORT).show();
+                        currentBook = reloadedBook;
+                        enterViewMode();
+                    } else {
+                        Toast.makeText(BookDetailActivity.this, "Failed to update book.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (SQLiteConstraintException e) {
+                mainHandler.post(() -> {
+                    binding.tilTitle.setError("A book with this title and author already exists.");
+                    binding.tilAuthor.setError("A book with this title and author already exists.");
+                    Toast.makeText(BookDetailActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    Toast.makeText(BookDetailActivity.this, "Error updating book: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
             }
         });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-        builder.show();
     }
 
     private void showDeleteConfirmationDialog() {
         if (currentBook == null) return;
 
-        new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle("Delete Book")
                 .setMessage("Are you sure you want to delete \"" + currentBook.getTitle() + "\"?")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    dbHelper.deleteBook(currentBook.getId());
-                    Toast.makeText(this, "Book deleted successfully!", Toast.LENGTH_SHORT).show();
-                    finish();
+                .setPositiveButton("Delete", (d, which) -> {
+                    executorService.execute(() -> {
+                        dbHelper.deleteBook(currentBook.getId());
+                        mainHandler.post(() -> {
+                            Toast.makeText(BookDetailActivity.this, "Book deleted successfully!", Toast.LENGTH_SHORT).show();
+                            performDashboardNavigation();
+                        });
+                    });
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(BookDetailActivity.this, R.color.delete_red));
+        });
+
+        dialog.show();
     }
 
     private void showUnsavedChangesDialog(Runnable onDiscard) {

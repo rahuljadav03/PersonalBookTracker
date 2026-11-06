@@ -14,4 +14,7 @@
     <color name="md_theme_light_onBackground">#1A1C1E</color>
     <color name="md_theme_light_surface">#FCFCFF</color>
     <color name="md_theme_light_onSurface">#1A1C1E</color>
+
+    <!-- Delete Red Color (Soft Coral Red #FF6B6B) -->
+    <color name="delete_red">#FF6B6B</color>
 </resources>

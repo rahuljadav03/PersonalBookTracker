@@ -20,6 +20,9 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Default LinearProgressIndicator style without stop indicator dot -->
+        <item name="linearProgressIndicatorStyle">@style/Widget.App.LinearProgressIndicator</item>
     </style>
 
     <style name="Theme.PersonalBookTracker" parent="Base.Theme.PersonalBookTracker" />

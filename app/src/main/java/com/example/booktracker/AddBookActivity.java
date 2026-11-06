@@ -3,6 +3,8 @@ package com.example.booktracker;
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
@@ -21,11 +23,18 @@ import com.example.booktracker.utils.ValidationResult;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class AddBookActivity extends AppCompatActivity {
 
     private ActivityAddBookBinding binding;
     private DatabaseHelper dbHelper;
+    private long bookId = -1;
+    private Book editingBook;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private static final String STATUS_LABEL_WANT_TO_READ = "Want to Read";
     private static final String STATUS_LABEL_READING = "Reading";
@@ -48,16 +57,52 @@ public class AddBookActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
+        bookId = getIntent().getLongExtra(Constants.EXTRA_BOOK_ID, -1);
+
         setupDropdowns();
         setupTextWatchers();
         setupClickListeners();
 
-        // Initial validation check to set Save button state
-        validateForm(false);
+        if (bookId != -1) {
+            loadBookForEditing();
+        } else {
+            validateForm(false);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
+    }
+
+    private void loadBookForEditing() {
+        executorService.execute(() -> {
+            editingBook = dbHelper.getBookById(bookId);
+            mainHandler.post(() -> {
+                if (editingBook == null) {
+                    Toast.makeText(AddBookActivity.this, "Book not found", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+
+                binding.tvFormTitle.setText("Edit Book");
+                binding.btnSaveBook.setText("Update Book");
+
+                binding.etTitle.setText(editingBook.getTitle());
+                binding.etAuthor.setText(editingBook.getAuthor());
+                binding.actvCategory.setText(editingBook.getCategory(), false);
+                binding.etTotalPages.setText(String.valueOf(editingBook.getTotalPages()));
+                binding.etPagesRead.setText(String.valueOf(editingBook.getPagesRead()));
+                binding.actvStatus.setText(mapStatusCodeToLabel(editingBook.getStatus()), false);
+                binding.etDescription.setText(editingBook.getDescription() != null ? editingBook.getDescription() : "");
+
+                validateForm(false);
+            });
+        });
     }
 
     private void setupDropdowns() {
-        // Category Dropdown
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
@@ -65,7 +110,6 @@ public class AddBookActivity extends AppCompatActivity {
         );
         binding.actvCategory.setAdapter(categoryAdapter);
 
-        // Status Dropdown
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_dropdown_item_1line,
@@ -73,7 +117,6 @@ public class AddBookActivity extends AppCompatActivity {
         );
         binding.actvStatus.setAdapter(statusAdapter);
 
-        // Default status selection if empty
         if (binding.actvStatus.getText().toString().isEmpty()) {
             binding.actvStatus.setText(STATUS_LABEL_WANT_TO_READ, false);
             binding.etPagesRead.setText("0");
@@ -98,10 +141,8 @@ public class AddBookActivity extends AppCompatActivity {
         binding.etAuthor.addTextChangedListener(commonWatcher);
         binding.etDescription.addTextChangedListener(commonWatcher);
 
-        // Category selection listener
         binding.actvCategory.setOnItemClickListener((parent, view, position, id) -> validateForm(true));
 
-        // Total pages listener: if status is Completed, auto-update pages read to total pages
         binding.etTotalPages.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -119,10 +160,8 @@ public class AddBookActivity extends AppCompatActivity {
             }
         });
 
-        // Pages read listener
         binding.etPagesRead.addTextChangedListener(commonWatcher);
 
-        // Status listener: auto-update pages read when status changes
         binding.actvStatus.setOnItemClickListener((parent, view, position, id) -> {
             String selectedStatusLabel = statusLabels.get(position);
             handleStatusChange(selectedStatusLabel);
@@ -149,7 +188,7 @@ public class AddBookActivity extends AppCompatActivity {
     private boolean validateForm(boolean showErrors) {
         boolean isValid = true;
 
-        // 1. Title
+        // Title
         String title = binding.etTitle.getText().toString().trim();
         if (title.isEmpty()) {
             if (showErrors) binding.tilTitle.setError("Title is required");
@@ -161,7 +200,7 @@ public class AddBookActivity extends AppCompatActivity {
             if (showErrors) binding.tilTitle.setError(null);
         }
 
-        // 2. Author
+        // Author
         String author = binding.etAuthor.getText().toString().trim();
         if (author.isEmpty()) {
             if (showErrors) binding.tilAuthor.setError("Author is required");
@@ -176,7 +215,7 @@ public class AddBookActivity extends AppCompatActivity {
             if (showErrors) binding.tilAuthor.setError(null);
         }
 
-        // 3. Category
+        // Category
         String category = binding.actvCategory.getText().toString().trim();
         if (category.isEmpty() || !Constants.CATEGORIES.contains(category)) {
             if (showErrors) binding.tilCategory.setError("Please select a valid category");
@@ -185,7 +224,7 @@ public class AddBookActivity extends AppCompatActivity {
             if (showErrors) binding.tilCategory.setError(null);
         }
 
-        // 4. Total Pages
+        // Total Pages
         String totalPagesStr = binding.etTotalPages.getText().toString().trim();
         int totalPages = 0;
         if (totalPagesStr.isEmpty()) {
@@ -206,7 +245,7 @@ public class AddBookActivity extends AppCompatActivity {
             }
         }
 
-        // 5. Pages Read & Status Cross-Field
+        // Pages Read & Status Cross-Field
         String statusLabel = binding.actvStatus.getText().toString().trim();
         String pagesReadStr = binding.etPagesRead.getText().toString().trim();
         int pagesRead = -1;
@@ -242,7 +281,7 @@ public class AddBookActivity extends AppCompatActivity {
             }
         }
 
-        // 6. Description
+        // Description
         String description = binding.etDescription.getText().toString().trim();
         if (!description.isEmpty() && description.length() > Constants.DESCRIPTION_MAX_LENGTH) {
             if (showErrors) binding.tilDescription.setError("Description cannot exceed 500 characters");
@@ -261,45 +300,92 @@ public class AddBookActivity extends AppCompatActivity {
             return;
         }
 
-        String title = binding.etTitle.getText().toString();
-        String author = binding.etAuthor.getText().toString();
-        String category = binding.actvCategory.getText().toString();
+        String title = binding.etTitle.getText().toString().trim();
+        String author = binding.etAuthor.getText().toString().trim();
+        String category = binding.actvCategory.getText().toString().trim();
         int totalPages = Integer.parseInt(binding.etTotalPages.getText().toString().trim());
         int pagesRead = Integer.parseInt(binding.etPagesRead.getText().toString().trim());
-        String statusLabel = binding.actvStatus.getText().toString();
+        String statusLabel = binding.actvStatus.getText().toString().trim();
         String statusCode = mapStatusLabelToCode(statusLabel);
-        String description = binding.etDescription.getText().toString();
+        String description = binding.etDescription.getText().toString().trim();
 
-        Book book = new Book(title, author, category, totalPages, pagesRead, statusCode, description);
+        executorService.execute(() -> {
+            Book book = new Book(title, author, category, totalPages, pagesRead, statusCode, description);
 
-        // Run BookValidator
-        ValidationResult validationResult = BookValidator.validate(book);
-        if (!validationResult.isValid()) {
-            displayValidationErrors(validationResult);
-            Toast.makeText(this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+            if (bookId != -1) {
+                book.setId(bookId);
+                if (editingBook != null) {
+                    book.setCreatedAt(editingBook.getCreatedAt());
+                }
 
-        try {
-            long id = dbHelper.insertBook(book);
-            if (id == -1) {
-                // Duplicate constraint failed
-                binding.tilTitle.setError("A book with this title and author already exists.");
-                binding.tilAuthor.setError("A book with this title and author already exists.");
-                Toast.makeText(this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                if (dbHelper.isDuplicateTitleAndAuthor(title, author, bookId)) {
+                    mainHandler.post(() -> {
+                        binding.tilTitle.setError("A book with this title and author already exists.");
+                        binding.tilAuthor.setError("A book with this title and author already exists.");
+                        Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                    });
+                    return;
+                }
+
+                ValidationResult validationResult = BookValidator.validate(book);
+                if (!validationResult.isValid()) {
+                    mainHandler.post(() -> {
+                        displayValidationErrors(validationResult);
+                        Toast.makeText(AddBookActivity.this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+
+                try {
+                    int rows = dbHelper.updateBook(book);
+                    mainHandler.post(() -> {
+                        if (rows > 0) {
+                            Toast.makeText(AddBookActivity.this, "Book updated successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+                            Toast.makeText(AddBookActivity.this, "Failed to update book.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (SQLiteConstraintException e) {
+                    mainHandler.post(() -> {
+                        binding.tilTitle.setError("A book with this title and author already exists.");
+                        binding.tilAuthor.setError("A book with this title and author already exists.");
+                        Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                    });
+                }
             } else {
-                Toast.makeText(this, "Book added successfully!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(AddBookActivity.this, BookListActivity.class);
-                startActivity(intent);
-                finish();
+                ValidationResult validationResult = BookValidator.validate(book);
+                if (!validationResult.isValid()) {
+                    mainHandler.post(() -> {
+                        displayValidationErrors(validationResult);
+                        Toast.makeText(AddBookActivity.this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+
+                try {
+                    long id = dbHelper.insertBook(book);
+                    mainHandler.post(() -> {
+                        if (id == -1) {
+                            binding.tilTitle.setError("A book with this title and author already exists.");
+                            binding.tilAuthor.setError("A book with this title and author already exists.");
+                            Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(AddBookActivity.this, "Book added successfully!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(AddBookActivity.this, BookListActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+                } catch (SQLiteConstraintException e) {
+                    mainHandler.post(() -> {
+                        binding.tilTitle.setError("A book with this title and author already exists.");
+                        binding.tilAuthor.setError("A book with this title and author already exists.");
+                        Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                    });
+                }
             }
-        } catch (SQLiteConstraintException e) {
-            binding.tilTitle.setError("A book with this title and author already exists.");
-            binding.tilAuthor.setError("A book with this title and author already exists.");
-            Toast.makeText(this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error saving book: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        });
     }
 
     private void displayValidationErrors(ValidationResult result) {
@@ -310,6 +396,17 @@ public class AddBookActivity extends AppCompatActivity {
         if (result.hasError("pagesRead")) binding.tilPagesRead.setError(result.getError("pagesRead"));
         if (result.hasError("status")) binding.tilStatus.setError(result.getError("status"));
         if (result.hasError("description")) binding.tilDescription.setError(result.getError("description"));
+    }
+
+    private String mapStatusCodeToLabel(String code) {
+        if (Constants.STATUS_WANT_TO_READ.equals(code)) {
+            return STATUS_LABEL_WANT_TO_READ;
+        } else if (Constants.STATUS_READING.equals(code)) {
+            return STATUS_LABEL_READING;
+        } else if (Constants.STATUS_COMPLETED.equals(code)) {
+            return STATUS_LABEL_COMPLETED;
+        }
+        return STATUS_LABEL_WANT_TO_READ;
     }
 
     private String mapStatusLabelToCode(String label) {

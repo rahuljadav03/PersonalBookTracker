@@ -2,9 +2,15 @@ package com.example.booktracker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.splashscreen.SplashScreen;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -16,12 +22,17 @@ import com.example.booktracker.utils.Constants;
 import com.example.booktracker.utils.InsetsHelper;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private DatabaseHelper dbHelper;
     private BookAdapter recentBooksAdapter;
+
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +56,35 @@ public class MainActivity extends AppCompatActivity {
         refreshDashboardData();
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executorService.shutdown();
+    }
+
     private void setupRecyclerView() {
-        recentBooksAdapter = new BookAdapter(book -> {
-            Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
-            intent.putExtra("book_id", book.getId());
-            startActivity(intent);
+        recentBooksAdapter = new BookAdapter(new BookAdapter.OnBookActionListener() {
+            @Override
+            public void onBookClick(Book book) {
+                Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
+                intent.putExtra(Constants.EXTRA_BOOK_ID, book.getId());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onEditClick(Book book) {
+                Intent intent = new Intent(MainActivity.this, BookDetailActivity.class);
+                intent.putExtra(Constants.EXTRA_BOOK_ID, book.getId());
+                intent.putExtra(Constants.EXTRA_EDIT_MODE, true);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onDeleteClick(Book book) {
+                showDeleteConfirmationDialog(book);
+            }
         });
+
         binding.rvRecentBooks.setLayoutManager(new LinearLayoutManager(this));
         binding.rvRecentBooks.setAdapter(recentBooksAdapter);
     }
@@ -73,17 +107,51 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void refreshDashboardData() {
-        int totalCount = dbHelper.getTotalBooksCount();
-        int wantToReadCount = dbHelper.getBooksCountByStatus(Constants.STATUS_WANT_TO_READ);
-        int readingCount = dbHelper.getBooksCountByStatus(Constants.STATUS_READING);
-        int completedCount = dbHelper.getBooksCountByStatus(Constants.STATUS_COMPLETED);
+        executorService.execute(() -> {
+            int totalCount = dbHelper.getTotalBooksCount();
+            int wantToReadCount = dbHelper.getBooksCountByStatus(Constants.STATUS_WANT_TO_READ);
+            int readingCount = dbHelper.getBooksCountByStatus(Constants.STATUS_READING);
+            int completedCount = dbHelper.getBooksCountByStatus(Constants.STATUS_COMPLETED);
+            List<Book> recentBooks = dbHelper.getRecentBooks(5);
 
-        binding.tvTotalBooksCount.setText(String.valueOf(totalCount));
-        binding.tvWantToReadCount.setText(String.valueOf(wantToReadCount));
-        binding.tvReadingCount.setText(String.valueOf(readingCount));
-        binding.tvCompletedCount.setText(String.valueOf(completedCount));
+            mainHandler.post(() -> {
+                binding.tvTotalBooksCount.setText(String.valueOf(totalCount));
+                binding.tvWantToReadCount.setText(String.valueOf(wantToReadCount));
+                binding.tvReadingCount.setText(String.valueOf(readingCount));
+                binding.tvCompletedCount.setText(String.valueOf(completedCount));
 
-        List<Book> recentBooks = dbHelper.getRecentBooks(5);
-        recentBooksAdapter.setBooks(recentBooks);
+                recentBooksAdapter.setBooks(recentBooks);
+
+                if (recentBooks.isEmpty()) {
+                    binding.rvRecentBooks.setVisibility(View.GONE);
+                } else {
+                    binding.rvRecentBooks.setVisibility(View.VISIBLE);
+                }
+            });
+        });
+    }
+
+    private void showDeleteConfirmationDialog(Book book) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Delete Book")
+                .setMessage("Are you sure you want to delete \"" + book.getTitle() + "\"?")
+                .setPositiveButton("Delete", (d, which) -> {
+                    executorService.execute(() -> {
+                        dbHelper.deleteBook(book.getId());
+                        mainHandler.post(() -> {
+                            Toast.makeText(MainActivity.this, "Book deleted", Toast.LENGTH_SHORT).show();
+                            refreshDashboardData();
+                        });
+                    });
+                })
+                .setNegativeButton("Cancel", null)
+                .create();
+
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                    .setTextColor(ContextCompat.getColor(MainActivity.this, R.color.delete_red));
+        });
+
+        dialog.show();
     }
 }

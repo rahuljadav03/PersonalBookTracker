@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reusable Delete Outlined Button Style with Zero Ripple / Zero Shadow Press Effect -->
+    <style name="Widget.App.Button.Delete" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/delete_red</item>
+        <item name="iconTint">@color/delete_red</item>
+        <item name="strokeColor">@color/delete_red</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <!-- Reusable LinearProgressIndicator Style without Stop Indicator Dot -->
+    <style name="Widget.App.LinearProgressIndicator" parent="Widget.Material3.LinearProgressIndicator">
+        <item name="trackStopIndicatorSize">0dp</item>
+    </style>
+</resources>
