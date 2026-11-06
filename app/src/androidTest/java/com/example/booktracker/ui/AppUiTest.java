@@ -28,6 +28,7 @@ import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 
 @RunWith(AndroidJUnit4.class)
@@ -43,28 +44,25 @@ public class AppUiTest {
         context.deleteDatabase("BookTracker.db");
     }
 
-    // 1. Dashboard Initial Empty State
+    // 1. Dashboard Launcher Opens MainActivity Directly
     @Test
-    public void testDashboardInitialZeroCounts() {
+    public void testLauncherOpensMainActivityDirectly() {
+        onView(withId(R.id.tv_dashboard_title)).check(matches(isDisplayed()));
         onView(withId(R.id.tv_total_books_count)).check(matches(withText("0")));
         onView(withId(R.id.tv_want_to_read_count)).check(matches(withText("0")));
         onView(withId(R.id.tv_reading_count)).check(matches(withText("0")));
         onView(withId(R.id.tv_completed_count)).check(matches(withText("0")));
     }
 
-    // 2. Empty Form Validation Errors
+    // 2. Add Book Validation Error
     @Test
     public void testAddBook_EmptyFormValidationErrors() {
         onView(withId(R.id.fab_add_book)).perform(click());
-
-        // Attempt to save empty form
         onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
-
-        // Form title should still be displayed indicating we are on the form page
         onView(withId(R.id.tv_form_title)).check(matches(isDisplayed()));
     }
 
-    // 3. Add Valid Book and See Dashboard Counts Update
+    // 3. Add Valid Book & Dashboard Counts Update
     @Test
     public void testAddBook_ValidBookUpdatesDashboard() {
         onView(withId(R.id.fab_add_book)).perform(click());
@@ -72,28 +70,25 @@ public class AppUiTest {
         onView(withId(R.id.et_title)).perform(typeText("Dune"), closeSoftKeyboard());
         onView(withId(R.id.et_author)).perform(typeText("Frank Herbert"), closeSoftKeyboard());
 
-        // Select Category
         onView(withId(R.id.actv_category)).perform(click());
         onData(is("Sci-Fi")).inRoot(isPlatformPopup()).perform(click());
 
         onView(withId(R.id.et_total_pages)).perform(typeText("412"), closeSoftKeyboard());
         onView(withId(R.id.et_pages_read)).perform(typeText("100"), closeSoftKeyboard());
 
-        // Select Status
         onView(withId(R.id.actv_status)).perform(click());
         onData(is("READING")).inRoot(isPlatformPopup()).perform(click());
 
         onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
 
-        // Returned to Dashboard -> Total count should be 1 and Reading count should be 1
         onView(withId(R.id.tv_total_books_count)).check(matches(withText("1")));
         onView(withId(R.id.tv_reading_count)).check(matches(withText("1")));
     }
 
-    // 4. Filter and Search in Book List
+    // 4. Filter and Search in Book List Activity
     @Test
-    public void testBookList_SearchAndFilter() {
-        // Add book 1
+    public void testBookList_SearchFilterAndEditDeleteFlow() {
+        // Add book
         onView(withId(R.id.fab_add_book)).perform(click());
         onView(withId(R.id.et_title)).perform(typeText("1984"), closeSoftKeyboard());
         onView(withId(R.id.et_author)).perform(typeText("George Orwell"), closeSoftKeyboard());
@@ -117,44 +112,9 @@ public class AppUiTest {
         onView(withId(R.id.rv_books)).check(matches(isDisplayed()));
     }
 
-    // 5. Edit and Delete Book Flow from Dashboard Recent List
+    // 5. Dashboard Recent List Edit Prefill and Save Flow
     @Test
-    public void testDashboardRecentList_EditAndDeleteFlow() {
-        // Add a book
-        onView(withId(R.id.fab_add_book)).perform(click());
-        onView(withId(R.id.et_title)).perform(typeText("Foundation"), closeSoftKeyboard());
-        onView(withId(R.id.et_author)).perform(typeText("Isaac Asimov"), closeSoftKeyboard());
-        onView(withId(R.id.actv_category)).perform(click());
-        onData(is("Sci-Fi")).inRoot(isPlatformPopup()).perform(click());
-        onView(withId(R.id.et_total_pages)).perform(typeText("255"), closeSoftKeyboard());
-        onView(withId(R.id.et_pages_read)).perform(typeText("255"), closeSoftKeyboard());
-        onView(withId(R.id.actv_status)).perform(click());
-        onData(is("COMPLETED")).inRoot(isPlatformPopup()).perform(click());
-        onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
-
-        // Confirm total count = 1 on Dashboard
-        onView(withId(R.id.tv_total_books_count)).check(matches(withText("1")));
-
-        // Click item on Dashboard
-        onView(withId(R.id.rv_recent_books)).perform(
-                RecyclerViewActions.actionOnItemAtPosition(0, click()));
-
-        // Verify Detail view opens
-        onView(withId(R.id.tv_detail_title)).check(matches(withText("Foundation")));
-
-        // Click Delete button in Detail view
-        onView(withId(R.id.btn_delete_book)).perform(scrollTo(), click());
-
-        // Confirm Delete in AlertDialog
-        onView(withId(android.R.id.button1)).perform(click());
-
-        // Dashboard count should return to 0 and recent list hides
-        onView(withId(R.id.tv_total_books_count)).check(matches(withText("0")));
-    }
-
-    // 6. Prefilled Edit Form and Save Flow
-    @Test
-    public void testEditPrefilledAndSaveFlow() {
+    public void testDashboardRecentList_EditPrefillAndSaveFlow() {
         // Add a book
         onView(withId(R.id.fab_add_book)).perform(click());
         onView(withId(R.id.et_title)).perform(typeText("Dune"), closeSoftKeyboard());
@@ -182,7 +142,7 @@ public class AppUiTest {
         onView(withId(R.id.et_pages_read)).check(matches(withText("100")));
         onView(withId(R.id.actv_status)).check(matches(withText("Reading")));
 
-        // Update Title
+        // Update Title and save
         onView(withId(R.id.et_title)).perform(clearText(), typeText("Dune Messiah"), closeSoftKeyboard());
         onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
 
@@ -190,9 +150,44 @@ public class AppUiTest {
         onView(withId(R.id.tv_detail_title)).check(matches(withText("Dune Messiah")));
     }
 
-    // 7. Verify Update Progress is removed and Back button navigates to Dashboard
+    // 6. Dashboard Recent List Delete Dialog Cancel & Delete Flow
     @Test
-    public void testBookDetail_BackNavigatesToDashboardAndNoUpdateProgressButton() {
+    public void testDashboardRecentList_DeleteCancelAndDeleteFlow() {
+        // Add a book
+        onView(withId(R.id.fab_add_book)).perform(click());
+        onView(withId(R.id.et_title)).perform(typeText("Foundation"), closeSoftKeyboard());
+        onView(withId(R.id.et_author)).perform(typeText("Isaac Asimov"), closeSoftKeyboard());
+        onView(withId(R.id.actv_category)).perform(click());
+        onData(is("Sci-Fi")).inRoot(isPlatformPopup()).perform(click());
+        onView(withId(R.id.et_total_pages)).perform(typeText("255"), closeSoftKeyboard());
+        onView(withId(R.id.et_pages_read)).perform(typeText("255"), closeSoftKeyboard());
+        onView(withId(R.id.actv_status)).perform(click());
+        onData(is("COMPLETED")).inRoot(isPlatformPopup()).perform(click());
+        onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
+
+        // Confirm total count = 1
+        onView(withId(R.id.tv_total_books_count)).check(matches(withText("1")));
+
+        // Click delete icon on item
+        onView(withId(R.id.btn_item_delete)).perform(click());
+
+        // Click Cancel in AlertDialog
+        onView(withId(android.R.id.button2)).perform(click());
+
+        // Count stays 1
+        onView(withId(R.id.tv_total_books_count)).check(matches(withText("1")));
+
+        // Click delete icon again and confirm Delete
+        onView(withId(R.id.btn_item_delete)).perform(click());
+        onView(withId(android.R.id.button1)).perform(click());
+
+        // Dashboard count returns to 0 and empty state / recent list hides
+        onView(withId(R.id.tv_total_books_count)).check(matches(withText("0")));
+    }
+
+    // 7. Book Details Panel Action Buttons, No Update Progress, and Back to Dashboard
+    @Test
+    public void testBookDetail_ActionButtonsOrderAndNoUpdateProgressButton() {
         // Add a book
         onView(withId(R.id.fab_add_book)).perform(click());
         onView(withId(R.id.et_title)).perform(typeText("The Hobbit"), closeSoftKeyboard());
@@ -212,6 +207,11 @@ public class AppUiTest {
         // Assert Update Progress button text does NOT exist
         onView(withText("Update Progress")).check(doesNotExist());
 
+        // Assert Edit Book, Delete Book, Back buttons are visible
+        onView(withId(R.id.btn_edit_book)).check(matches(isDisplayed()));
+        onView(withId(R.id.btn_delete_book)).check(matches(isDisplayed()));
+        onView(withId(R.id.btn_back_to_dashboard)).check(matches(isDisplayed()));
+
         // Click Back button
         onView(withId(R.id.btn_back_to_dashboard)).perform(scrollTo(), click());
 
@@ -219,9 +219,9 @@ public class AppUiTest {
         onView(withId(R.id.tv_dashboard_title)).check(matches(isDisplayed()));
     }
 
-    // 8. Verify editing a book updates title and detail views
+    // 8. Last Updated Changes On Edit While Added On Stays Unchanged
     @Test
-    public void testEditBook_UpdatesLastUpdatedTimestamp() {
+    public void testEditBook_LastUpdatedChangesAndAddedOnStaysUnchanged() {
         // Add a book
         onView(withId(R.id.fab_add_book)).perform(click());
         onView(withId(R.id.et_title)).perform(typeText("Hyperion"), closeSoftKeyboard());
@@ -238,6 +238,10 @@ public class AppUiTest {
         onView(withId(R.id.rv_recent_books)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(0, click()));
 
+        // Verify Added on text pattern
+        onView(withId(R.id.tv_detail_created_at)).check(matches(withText(containsString("Added on:"))));
+        onView(withId(R.id.tv_detail_updated_at)).check(matches(withText(containsString("Last updated:"))));
+
         // Tap Edit button
         onView(withId(R.id.btn_edit_book)).perform(scrollTo(), click());
 
@@ -245,7 +249,39 @@ public class AppUiTest {
         onView(withId(R.id.et_title)).perform(clearText(), typeText("Hyperion Cantos"), closeSoftKeyboard());
         onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
 
-        // Verify updated title
+        // Verify updated title and timestamps
         onView(withId(R.id.tv_detail_title)).check(matches(withText("Hyperion Cantos")));
+        onView(withId(R.id.tv_detail_created_at)).check(matches(withText(containsString("Added on:"))));
+        onView(withId(R.id.tv_detail_updated_at)).check(matches(withText(containsString("Last updated:"))));
+    }
+
+    // 9. Statistics Screen Without Crash On 0 Books and With Books
+    @Test
+    public void testStatisticsScreen_ZeroBooksAndWithBooksNoCrash() {
+        // Open statistics with 0 books
+        onView(withId(R.id.btn_view_statistics)).perform(click());
+        onView(withId(R.id.tv_stats_title)).check(matches(isDisplayed()));
+        onView(withId(R.id.tv_stat_total_books)).check(matches(withText("0")));
+        onView(withId(R.id.tv_stat_completion_rate)).check(matches(withText("0%")));
+
+        // Press back
+        androidx.test.espresso.Espresso.pressBack();
+
+        // Add a book
+        onView(withId(R.id.fab_add_book)).perform(click());
+        onView(withId(R.id.et_title)).perform(typeText("Solaris"), closeSoftKeyboard());
+        onView(withId(R.id.et_author)).perform(typeText("Stanislaw Lem"), closeSoftKeyboard());
+        onView(withId(R.id.actv_category)).perform(click());
+        onData(is("Sci-Fi")).inRoot(isPlatformPopup()).perform(click());
+        onView(withId(R.id.et_total_pages)).perform(typeText("204"), closeSoftKeyboard());
+        onView(withId(R.id.et_pages_read)).perform(typeText("204"), closeSoftKeyboard());
+        onView(withId(R.id.actv_status)).perform(click());
+        onData(is("COMPLETED")).inRoot(isPlatformPopup()).perform(click());
+        onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
+
+        // Open statistics again
+        onView(withId(R.id.btn_view_statistics)).perform(click());
+        onView(withId(R.id.tv_stat_total_books)).check(matches(withText("1")));
+        onView(withId(R.id.tv_stat_completion_rate)).check(matches(withText("100%")));
     }
 }

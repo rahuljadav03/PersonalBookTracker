@@ -94,6 +94,7 @@ public class DatabaseHelperTest {
         long id = dbHelper.insertBook(book);
 
         Book inserted = dbHelper.getBookById(id);
+        long initialCreatedAt = inserted.getCreatedAt();
         long initialUpdatedAt = inserted.getUpdatedAt();
 
         // Small delay to ensure timestamp difference
@@ -108,8 +109,37 @@ public class DatabaseHelperTest {
         Book updated = dbHelper.getBookById(id);
         assertEquals("Updated Title", updated.getTitle());
         assertEquals(150, updated.getPagesRead());
-        assertEquals("Created_at must remain unchanged after edit", inserted.getCreatedAt(), updated.getCreatedAt());
+        assertEquals("Created_at must remain unchanged after edit", initialCreatedAt, updated.getCreatedAt());
         assertTrue("Updated timestamp should be greater than initial", updated.getUpdatedAt() > initialUpdatedAt);
+    }
+
+    @Test
+    public void testGetRecentBooks_ReturnsLatest5InRightOrder() throws InterruptedException {
+        for (int i = 1; i <= 7; i++) {
+            Book b = createSampleBook("Book " + i, "Author " + i, Constants.STATUS_WANT_TO_READ, 100, 0);
+            dbHelper.insertBook(b);
+            Thread.sleep(5);
+        }
+
+        List<Book> recent = dbHelper.getRecentBooks(5);
+        assertEquals(5, recent.size());
+        assertEquals("Book 7", recent.get(0).getTitle());
+        assertEquals("Book 6", recent.get(1).getTitle());
+        assertEquals("Book 5", recent.get(2).getTitle());
+    }
+
+    @Test
+    public void testUpdateBook_DuplicateTitleAndAuthorCheck() {
+        Book b1 = createSampleBook("Dune", "Frank Herbert", Constants.STATUS_READING, 412, 100);
+        Book b2 = createSampleBook("Foundation", "Isaac Asimov", Constants.STATUS_COMPLETED, 255, 255);
+        long id1 = dbHelper.insertBook(b1);
+        long id2 = dbHelper.insertBook(b2);
+
+        // Checking duplicate for b2 using b1's title and author should return true
+        assertTrue(dbHelper.isDuplicateTitleAndAuthor("Dune", "Frank Herbert", id2));
+
+        // Checking duplicate for b1 using its own title and author should return false (ignores self ID)
+        assertFalse(dbHelper.isDuplicateTitleAndAuthor("Dune", "Frank Herbert", id1));
     }
 
     @Test
