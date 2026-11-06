@@ -178,6 +178,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return book;
     }
 
+    public boolean isDuplicateTitleAndAuthor(String title, String author, long excludeBookId) {
+        if (title == null || author == null) return false;
+        SQLiteDatabase db = this.getReadableDatabase();
+        boolean isDuplicate = false;
+        String sql = "SELECT COUNT(*) FROM " + TABLE_BOOKS +
+                " WHERE " + COLUMN_TITLE + " = ? COLLATE NOCASE" +
+                " AND " + COLUMN_AUTHOR + " = ? COLLATE NOCASE" +
+                " AND " + COLUMN_ID + " != ?";
+        try (Cursor cursor = db.rawQuery(sql, new String[]{title.trim(), author.trim(), String.valueOf(excludeBookId)})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                isDuplicate = cursor.getInt(0) > 0;
+            }
+        }
+        db.close();
+        return isDuplicate;
+    }
+
     public List<Book> getFilteredBooks(String searchQuery, String statusFilter, String sortBy) {
         List<Book> bookList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
