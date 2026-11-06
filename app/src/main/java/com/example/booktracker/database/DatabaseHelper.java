@@ -128,6 +128,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return bookList;
     }
 
+    public int getTotalBooksCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int count = 0;
+        try (Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_BOOKS, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        }
+        db.close();
+        return count;
+    }
+
+    public int getBooksCountByStatus(String status) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int count = 0;
+        try (Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_BOOKS + " WHERE " + COLUMN_STATUS + " = ?", new String[]{status})) {
+            if (cursor != null && cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+        }
+        db.close();
+        return count;
+    }
+
+    public List<Book> getRecentBooks(int limit) {
+        List<Book> bookList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        try (Cursor cursor = db.query(TABLE_BOOKS, null, null, null, null, null, COLUMN_CREATED_AT + " DESC", String.valueOf(limit))) {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    bookList.add(cursorToBook(cursor));
+                } while (cursor.moveToNext());
+            }
+        }
+        db.close();
+        return bookList;
+    }
+
+    public Book getBookById(long id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Book book = null;
+        try (Cursor cursor = db.query(TABLE_BOOKS, null, COLUMN_ID + " = ?", new String[]{String.valueOf(id)}, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                book = cursorToBook(cursor);
+            }
+        }
+        db.close();
+        return book;
+    }
+
     public void deleteBook(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
