@@ -1,25 +1,84 @@
 <resources>
     <string name="app_name">Personal Book Tracker</string>
 
-    <!-- Dashboard -->
-    <string name="title_dashboard">My Books</string>
-    <string name="action_add_book">Add Book</string>
-
-    <!-- Add/Edit Book -->
+    <!-- Navigation & Titles -->
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_book_list">My Book Library</string>
     <string name="title_add_book">Add New Book</string>
     <string name="title_edit_book">Edit Book</string>
+    <string name="title_book_details">Book Details</string>
+    <string name="title_statistics">Reading Statistics</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_welcome">Welcome to your Book Tracker</string>
+    <string name="dashboard_summary">Library Overview</string>
+    <string name="stat_total_books">Total Books</string>
+    <string name="stat_want_to_read">Want to Read</string>
+    <string name="stat_reading">Reading</string>
+    <string name="stat_completed">Completed</string>
+    <string name="stat_pages_read">Pages Read</string>
+    <string name="section_recent_books">Recently Added Books</string>
+    <string name="action_view_all">View All Books</string>
+    <string name="action_view_statistics">View Statistics</string>
+    <string name="action_add_book">Add Book</string>
+
+    <!-- Form Fields & Hints -->
     <string name="hint_title">Book Title</string>
     <string name="hint_author">Author</string>
-    <string name="hint_category">Category</string>
+    <string name="hint_category">Select Category</string>
     <string name="hint_total_pages">Total Pages</string>
     <string name="hint_pages_read">Pages Read</string>
-    <string name="hint_status">Status</string>
+    <string name="hint_status">Reading Status</string>
     <string name="hint_description">Description (Optional)</string>
-    <string name="action_save">Save</string>
+    <string name="action_save">Save Book</string>
+    <string name="action_cancel">Cancel</string>
 
-    <!-- Details/List -->
-    <string name="action_delete">Delete</string>
-    <string name="action_edit">Edit</string>
+    <!-- Book List, Search, Filter & Sort -->
+    <string name="hint_search">Search by title or author…</string>
+    <string name="filter_all">All</string>
+    <string name="filter_want_to_read">Want to Read</string>
+    <string name="filter_reading">Reading</string>
+    <string name="filter_completed">Completed</string>
+    <string name="label_sort">Sort By</string>
+    <string name="sort_title_asc">Title (A-Z)</string>
+    <string name="sort_author_asc">Author (A-Z)</string>
+    <string name="sort_recent">Recently Added</string>
+    <string name="empty_state_title">No Books Found</string>
+    <string name="empty_state_subtitle">Your library is currently empty. Tap below to add your first book!</string>
+    <string name="empty_state_button">Add Your First Book</string>
+
+    <!-- Book Details -->
+    <string name="section_progress">Reading Progress</string>
+    <string name="section_details">Book Details</string>
+    <string name="section_description">Description</string>
+    <string name="label_category">Category:</string>
+    <string name="label_status">Status:</string>
+    <string name="label_total_pages">Total Pages:</string>
+    <string name="label_pages_read">Pages Read:</string>
+    <string name="label_created">Added On:</string>
+    <string name="label_updated">Last Updated:</string>
+    <string name="progress_format">%1$d of %2$d pages (%3$d%%)</string>
+    <string name="action_edit">Edit Book</string>
+    <string name="action_delete">Delete Book</string>
+    <string name="action_update_progress">Update Progress</string>
+
+    <!-- Statistics -->
+    <string name="section_reading_summary">Overall Reading Summary</string>
+    <string name="section_category_breakdown">Category Distribution</string>
+    <string name="stat_completion_rate">Completion Rate</string>
+    <string name="stat_avg_pages">Avg Pages / Book</string>
+    <string name="stat_total_pages_summary">Total Pages Read Across Library</string>
+
+    <!-- Content Descriptions for Accessibility -->
+    <string name="cd_add_book">Add a new book to your library</string>
+    <string name="cd_search_book">Search books by title or author</string>
+    <string name="cd_filter_books">Filter books by status</string>
+    <string name="cd_sort_books">Select sort order</string>
+    <string name="cd_edit_book">Edit this book\'s information</string>
+    <string name="cd_delete_book">Delete this book</string>
+    <string name="cd_empty_state">Empty library icon</string>
+    <string name="cd_book_icon">Book icon</string>
+    <string name="cd_stat_icon">Statistics icon</string>
 
     <!-- Errors -->
     <string name="error_required">This field is required</string>
