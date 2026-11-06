@@ -438,6 +438,25 @@ public class BookValidatorTest {
     }
 
     @Test
+    public void testAuthor_SpecialCharacters_ApostropheHyphenDot() {
+        Book book = createValidBook();
+        book.setAuthor("O'Reilly-Smith Jr.");
+        ValidationResult result = BookValidator.validate(book);
+        assertTrue("Author with apostrophe, hyphen, and dot should be valid", result.isValid());
+    }
+
+    @Test
+    public void testSpecialCharactersAndVeryLongInput() {
+        Book book = createValidBook();
+        book.setTitle("C++ & Java: 100% Guaranteed_Code!");
+        book.setAuthor("Bjarne Stroustrup");
+        book.setDescription(createStringOfLength(500)); // Exactly 500 chars
+
+        ValidationResult result = BookValidator.validate(book);
+        assertTrue("Book with 500-char description should be valid", result.isValid());
+    }
+
+    @Test
     public void testMultipleErrors() {
         Book book = new Book();
         book.setTitle("A"); // Invalid: length 1

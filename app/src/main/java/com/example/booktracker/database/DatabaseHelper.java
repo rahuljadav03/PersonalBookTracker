@@ -186,8 +186,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<String> selectionArgs = new ArrayList<>();
 
         if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-            sql.append(" AND (").append(COLUMN_TITLE).append(" LIKE ? OR ").append(COLUMN_AUTHOR).append(" LIKE ?)");
-            String likeParam = "%" + searchQuery.trim() + "%";
+            // Safely escape SQLite LIKE wildcards (%, _, !)
+            String escapedQuery = searchQuery.trim()
+                    .replace("!", "!!")
+                    .replace("%", "!%")
+                    .replace("_", "!_");
+
+            sql.append(" AND (").append(COLUMN_TITLE).append(" LIKE ? ESCAPE '!' OR ")
+               .append(COLUMN_AUTHOR).append(" LIKE ? ESCAPE '!')");
+            String likeParam = "%" + escapedQuery + "%";
             selectionArgs.add(likeParam);
             selectionArgs.add(likeParam);
         }
@@ -199,10 +206,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if ("TITLE_ASC".equals(sortBy)) {
             sql.append(" ORDER BY ").append(COLUMN_TITLE).append(" COLLATE NOCASE ASC");
+        } else if ("TITLE_DESC".equals(sortBy)) {
+            sql.append(" ORDER BY ").append(COLUMN_TITLE).append(" COLLATE NOCASE DESC");
         } else if ("AUTHOR_ASC".equals(sortBy)) {
             sql.append(" ORDER BY ").append(COLUMN_AUTHOR).append(" COLLATE NOCASE ASC");
+        } else if ("AUTHOR_DESC".equals(sortBy)) {
+            sql.append(" ORDER BY ").append(COLUMN_AUTHOR).append(" COLLATE NOCASE DESC");
         } else {
-            sql.append(" ORDER BY ").append(COLUMN_UPDATED_AT).append(" DESC");
+            sql.append(" ORDER BY ").append(COLUMN_CREATED_AT).append(" DESC");
         }
 
         try (Cursor cursor = db.rawQuery(sql.toString(), selectionArgs.toArray(new String[0]))) {
