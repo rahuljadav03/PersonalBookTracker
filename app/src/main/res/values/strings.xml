@@ -40,12 +40,17 @@
     <string name="filter_reading">Reading</string>
     <string name="filter_completed">Completed</string>
     <string name="label_sort">Sort By</string>
-    <string name="sort_title_asc">Title (A-Z)</string>
-    <string name="sort_author_asc">Author (A-Z)</string>
     <string name="sort_recent">Recently Added</string>
+    <string name="sort_title_asc">Title (A-Z)</string>
+    <string name="sort_title_desc">Title (Z-A)</string>
+    <string name="sort_author_asc">Author (A-Z)</string>
+    <string name="sort_author_desc">Author (Z-A)</string>
     <string name="empty_state_title">No Books Found</string>
     <string name="empty_state_subtitle">Your library is currently empty. Tap below to add your first book!</string>
     <string name="empty_state_button">Add Your First Book</string>
+    <string name="no_results_title">No Matching Books</string>
+    <string name="no_results_subtitle">No books match your search or filter criteria. Try adjusting your search term or filters.</string>
+    <string name="no_results_button">Clear Search &amp; Filters</string>
 
     <!-- Book Details -->
     <string name="section_progress">Reading Progress</string>
