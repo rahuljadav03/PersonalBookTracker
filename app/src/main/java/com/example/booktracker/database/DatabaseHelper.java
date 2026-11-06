@@ -178,6 +178,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return book;
     }
 
+    public List<Book> getFilteredBooks(String searchQuery, String statusFilter, String sortBy) {
+        List<Book> bookList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM " + TABLE_BOOKS + " WHERE 1=1");
+        List<String> selectionArgs = new ArrayList<>();
+
+        if (searchQuery != null && !searchQuery.trim().isEmpty()) {
+            sql.append(" AND (").append(COLUMN_TITLE).append(" LIKE ? OR ").append(COLUMN_AUTHOR).append(" LIKE ?)");
+            String likeParam = "%" + searchQuery.trim() + "%";
+            selectionArgs.add(likeParam);
+            selectionArgs.add(likeParam);
+        }
+
+        if (statusFilter != null && !statusFilter.isEmpty() && !"ALL".equals(statusFilter)) {
+            sql.append(" AND ").append(COLUMN_STATUS).append(" = ?");
+            selectionArgs.add(statusFilter);
+        }
+
+        if ("TITLE_ASC".equals(sortBy)) {
+            sql.append(" ORDER BY ").append(COLUMN_TITLE).append(" COLLATE NOCASE ASC");
+        } else if ("AUTHOR_ASC".equals(sortBy)) {
+            sql.append(" ORDER BY ").append(COLUMN_AUTHOR).append(" COLLATE NOCASE ASC");
+        } else {
+            sql.append(" ORDER BY ").append(COLUMN_UPDATED_AT).append(" DESC");
+        }
+
+        try (Cursor cursor = db.rawQuery(sql.toString(), selectionArgs.toArray(new String[0]))) {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    bookList.add(cursorToBook(cursor));
+                } while (cursor.moveToNext());
+            }
+        }
+        db.close();
+        return bookList;
+    }
+
     public void deleteBook(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_BOOKS, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});

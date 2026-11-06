@@ -74,6 +74,34 @@
             app:layout_constraintTop_toBottomOf="@id/tv_item_author"
             tools:text="Sci-Fi" />
 
+        <!-- Edit Action Button -->
+        <ImageButton
+            android:id="@+id/btn_item_edit"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_edit_book"
+            android:padding="12dp"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="@id/chip_item_category"
+            app:layout_constraintEnd_toStartOf="@id/btn_item_delete"
+            app:layout_constraintTop_toTopOf="@id/chip_item_category"
+            app:tint="?attr/colorOnSurfaceVariant" />
+
+        <!-- Delete Action Button -->
+        <ImageButton
+            android:id="@+id/btn_item_delete"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_delete_book"
+            android:padding="12dp"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="@id/chip_item_category"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/chip_item_category"
+            app:tint="?attr/colorError" />
+
         <!-- Progress Indicator -->
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progress_item_pages"
