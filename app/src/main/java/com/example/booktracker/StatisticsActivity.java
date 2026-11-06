@@ -5,11 +5,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.TextView;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.booktracker.database.DatabaseHelper;
 import com.example.booktracker.databinding.ActivityStatisticsBinding;
 import com.example.booktracker.utils.Constants;
+import com.example.booktracker.utils.InsetsHelper;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -25,9 +27,12 @@ public class StatisticsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         binding = ActivityStatisticsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        InsetsHelper.applySystemBarInsets(binding.getRoot());
 
         dbHelper = new DatabaseHelper(this);
     }
