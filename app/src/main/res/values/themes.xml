@@ -23,4 +23,11 @@
     </style>
 
     <style name="Theme.PersonalBookTracker" parent="Base.Theme.PersonalBookTracker" />
+
+    <!-- Starting Theme for AndroidX SplashScreen API -->
+    <style name="Theme.PersonalBookTracker.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/md_theme_light_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_icon</item>
+        <item name="postSplashScreenTheme">@style/Theme.PersonalBookTracker</item>
+    </style>
 </resources>
