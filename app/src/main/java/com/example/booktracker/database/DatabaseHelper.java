@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.booktracker.model.Book;
+import com.example.booktracker.utils.BookValidator;
 import com.example.booktracker.utils.Constants;
+import com.example.booktracker.utils.ValidationResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +65,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public long insertBook(Book book) {
+        ValidationResult validationResult = BookValidator.validate(book);
+        if (!validationResult.isValid()) {
+            throw new IllegalArgumentException("Book validation failed: " + validationResult.getErrors());
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         long currentTime = System.currentTimeMillis();
 
-        values.put(COLUMN_TITLE, book.getTitle().trim());
-        values.put(COLUMN_AUTHOR, book.getAuthor().trim());
+        values.put(COLUMN_TITLE, book.getTitle());
+        values.put(COLUMN_AUTHOR, book.getAuthor());
         values.put(COLUMN_CATEGORY, book.getCategory());
         values.put(COLUMN_TOTAL_PAGES, book.getTotalPages());
         values.put(COLUMN_PAGES_READ, book.getPagesRead());
@@ -83,11 +90,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int updateBook(Book book) {
+        ValidationResult validationResult = BookValidator.validate(book);
+        if (!validationResult.isValid()) {
+            throw new IllegalArgumentException("Book validation failed: " + validationResult.getErrors());
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(COLUMN_TITLE, book.getTitle().trim());
-        values.put(COLUMN_AUTHOR, book.getAuthor().trim());
+        values.put(COLUMN_TITLE, book.getTitle());
+        values.put(COLUMN_AUTHOR, book.getAuthor());
         values.put(COLUMN_CATEGORY, book.getCategory());
         values.put(COLUMN_TOTAL_PAGES, book.getTotalPages());
         values.put(COLUMN_PAGES_READ, book.getPagesRead());
