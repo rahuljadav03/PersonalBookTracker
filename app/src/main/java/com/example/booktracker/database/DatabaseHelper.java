@@ -152,6 +152,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
+    public int getTotalPagesRead() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int sum = 0;
+        try (Cursor cursor = db.rawQuery("SELECT SUM(" + COLUMN_PAGES_READ + ") FROM " + TABLE_BOOKS, null)) {
+            if (cursor != null && cursor.moveToFirst() && !cursor.isNull(0)) {
+                sum = cursor.getInt(0);
+            }
+        }
+        db.close();
+        return sum;
+    }
+
+    public int getTotalPagesCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int sum = 0;
+        try (Cursor cursor = db.rawQuery("SELECT SUM(" + COLUMN_TOTAL_PAGES + ") FROM " + TABLE_BOOKS, null)) {
+            if (cursor != null && cursor.moveToFirst() && !cursor.isNull(0)) {
+                sum = cursor.getInt(0);
+            }
+        }
+        db.close();
+        return sum;
+    }
+
+    public java.util.Map<String, Integer> getCategoryCounts() {
+        java.util.Map<String, Integer> categoryMap = new java.util.LinkedHashMap<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "SELECT " + COLUMN_CATEGORY + ", COUNT(*) FROM " + TABLE_BOOKS +
+                " GROUP BY " + COLUMN_CATEGORY +
+                " ORDER BY COUNT(*) DESC";
+        try (Cursor cursor = db.rawQuery(sql, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    String category = cursor.getString(0);
+                    int count = cursor.getInt(1);
+                    categoryMap.put(category, count);
+                } while (cursor.moveToNext());
+            }
+        }
+        db.close();
+        return categoryMap;
+    }
+
     public List<Book> getRecentBooks(int limit) {
         List<Book> bookList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
