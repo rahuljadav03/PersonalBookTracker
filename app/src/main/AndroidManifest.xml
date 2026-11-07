@@ -11,16 +11,42 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PersonalBookTracker">
+
+        <!-- Main Dashboard Activity (Launcher Activity) -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:theme="@style/Theme.PersonalBookTracker.Starting"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Form Add/Edit Book Activity -->
+        <activity
+            android:name=".AddBookActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Book Library List Activity -->
+        <activity
+            android:name=".BookListActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Book Details Activity -->
+        <activity
+            android:name=".BookDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- Reading Statistics Activity -->
+        <activity
+            android:name=".StatisticsActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
