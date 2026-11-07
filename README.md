@@ -2,7 +2,6 @@
 
 **Personal Book Tracker** is an offline native Android application designed to help users track their personal reading goals, manage book collections, and view reading statistics. The application is built using Java, Android XML ViewBinding, and a local SQLite database for complete data privacy without requiring an internet connection.
 
-**Project Type:** College Mini Project (Mobile Application Development)
 
 ---
 
