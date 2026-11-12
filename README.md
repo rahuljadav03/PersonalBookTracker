@@ -3,8 +3,6 @@
 **Version:** `1.0.1`  
 **Personal Book Tracker** is an offline native Android application designed to help users track their personal reading goals, manage book collections, and view reading statistics. The application is built using Java, Android XML ViewBinding, and a local SQLite database for complete data privacy without requiring an internet connection.
 
-**Project Type:** College Mini Project (Mobile Application Development)
-
 ---
 
 ## 📋 Changelog
@@ -29,24 +27,6 @@
 - 🔍 **Search & Filter:** Search books by title or author, filter by reading status, and sort by title, author, or addition date.
 - 📈 **Reading Statistics:** View library summary metrics including completion rate, average pages read per book, and status and category breakdowns.
 - 🕒 **IST Date and Time:** Timestamps for creation and updates automatically formatted in Indian Standard Time (Asia/Kolkata) in 12-hour AM/PM format.
-
----
-
-## 📸 Screenshots
-
-| Splash & Launch | Dashboard | Add Book |
-| :---: | :---: | :---: |
-| ![Splash Screen](docs/screenshots/splash.png) | ![Dashboard](docs/screenshots/dashboard.png) | ![Add Book Form](docs/screenshots/add_book.png) |
-
-| Library List | Book Details | Edit Mode | Statistics |
-| :---: | :---: | :---: | :---: |
-| ![Book List](docs/screenshots/book_list.png) | ![Book Details](docs/screenshots/book_details.png) | ![Edit Mode](docs/screenshots/edit_book.png) | ![Reading Statistics](docs/screenshots/statistics.png) |
-
-### 📷 Screenshots to Retake for v1.0.1
-When updating documentation images for v1.0.1, retake the following screenshots:
-1. `book_details.png`: To reflect the Back button below Delete Book, the removal of "Update Progress", and the `#FF6B6B` zero-ripple Delete button.
-2. `edit_book.png`: To show the Edit Book panel with the updated Cancel navigation behavior.
-3. `dashboard.png` & `book_list.png`: To capture the new icon-free custom overlay toast messages (`ToastHelper`).
 
 ---
 
