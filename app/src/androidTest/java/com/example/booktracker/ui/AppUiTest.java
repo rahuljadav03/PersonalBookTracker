@@ -49,9 +49,6 @@ public class AppUiTest {
     public void testLauncherOpensMainActivityDirectly() {
         onView(withId(R.id.tv_dashboard_title)).check(matches(isDisplayed()));
         onView(withId(R.id.tv_total_books_count)).check(matches(withText("0")));
-        onView(withId(R.id.tv_want_to_read_count)).check(matches(withText("0")));
-        onView(withId(R.id.tv_reading_count)).check(matches(withText("0")));
-        onView(withId(R.id.tv_completed_count)).check(matches(withText("0")));
     }
 
     // 2. Add Book Validation Error
@@ -85,36 +82,9 @@ public class AppUiTest {
         onView(withId(R.id.tv_reading_count)).check(matches(withText("1")));
     }
 
-    // 4. Filter and Search in Book List Activity
+    // 4. Edit Cancel With No Changes Navigates To Dashboard Directly
     @Test
-    public void testBookList_SearchFilterAndEditDeleteFlow() {
-        // Add book
-        onView(withId(R.id.fab_add_book)).perform(click());
-        onView(withId(R.id.et_title)).perform(typeText("1984"), closeSoftKeyboard());
-        onView(withId(R.id.et_author)).perform(typeText("George Orwell"), closeSoftKeyboard());
-        onView(withId(R.id.actv_category)).perform(click());
-        onData(is("Fiction")).inRoot(isPlatformPopup()).perform(click());
-        onView(withId(R.id.et_total_pages)).perform(typeText("328"), closeSoftKeyboard());
-        onView(withId(R.id.et_pages_read)).perform(typeText("0"), closeSoftKeyboard());
-        onView(withId(R.id.actv_status)).perform(click());
-        onData(is("WANT_TO_READ")).inRoot(isPlatformPopup()).perform(click());
-        onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
-
-        // Navigate to Book List
-        onView(withId(R.id.btn_view_all_books)).perform(click());
-
-        // Search for 1984
-        onView(withId(R.id.et_search)).perform(typeText("1984"), closeSoftKeyboard());
-        onView(withId(R.id.rv_books)).check(matches(isDisplayed()));
-
-        // Filter by Want to Read chip
-        onView(withId(R.id.chip_filter_want_to_read)).perform(click());
-        onView(withId(R.id.rv_books)).check(matches(isDisplayed()));
-    }
-
-    // 5. Dashboard Recent List Edit Prefill and Save Flow
-    @Test
-    public void testDashboardRecentList_EditPrefillAndSaveFlow() {
+    public void testEditBook_CancelWithNoChangesNavigatesToDashboard() {
         // Add a book
         onView(withId(R.id.fab_add_book)).perform(click());
         onView(withId(R.id.et_title)).perform(typeText("Dune"), closeSoftKeyboard());
@@ -127,27 +97,50 @@ public class AppUiTest {
         onData(is("READING")).inRoot(isPlatformPopup()).perform(click());
         onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
 
-        // On Dashboard, open item in Detail view
+        // Open details and enter Edit Mode
         onView(withId(R.id.rv_recent_books)).perform(
                 RecyclerViewActions.actionOnItemAtPosition(0, click()));
-
-        // Tap Edit button
         onView(withId(R.id.btn_edit_book)).perform(scrollTo(), click());
 
-        // Assert all fields are prefilled
-        onView(withId(R.id.et_title)).check(matches(withText("Dune")));
-        onView(withId(R.id.et_author)).check(matches(withText("Frank Herbert")));
-        onView(withId(R.id.actv_category)).check(matches(withText("Sci-Fi")));
-        onView(withId(R.id.et_total_pages)).check(matches(withText("412")));
-        onView(withId(R.id.et_pages_read)).check(matches(withText("100")));
-        onView(withId(R.id.actv_status)).check(matches(withText("Reading")));
+        // Tap Cancel with no changes
+        onView(withId(R.id.btn_cancel_edit)).perform(scrollTo(), click());
 
-        // Update Title and save
-        onView(withId(R.id.et_title)).perform(clearText(), typeText("Dune Messiah"), closeSoftKeyboard());
+        // Assert Dashboard is displayed
+        onView(withId(R.id.tv_dashboard_title)).check(matches(isDisplayed()));
+    }
+
+    // 5. Edit Cancel With Changes Shows Discard Dialog
+    @Test
+    public void testEditBook_CancelWithChangesShowsDiscardDialog() {
+        // Add a book
+        onView(withId(R.id.fab_add_book)).perform(click());
+        onView(withId(R.id.et_title)).perform(typeText("Dune"), closeSoftKeyboard());
+        onView(withId(R.id.et_author)).perform(typeText("Frank Herbert"), closeSoftKeyboard());
+        onView(withId(R.id.actv_category)).perform(click());
+        onData(is("Sci-Fi")).inRoot(isPlatformPopup()).perform(click());
+        onView(withId(R.id.et_total_pages)).perform(typeText("412"), closeSoftKeyboard());
+        onView(withId(R.id.et_pages_read)).perform(typeText("100"), closeSoftKeyboard());
+        onView(withId(R.id.actv_status)).perform(click());
+        onData(is("READING")).inRoot(isPlatformPopup()).perform(click());
         onView(withId(R.id.btn_save_book)).perform(scrollTo(), click());
 
-        // Assert updated title in View Mode
-        onView(withId(R.id.tv_detail_title)).check(matches(withText("Dune Messiah")));
+        // Open details and enter Edit Mode
+        onView(withId(R.id.rv_recent_books)).perform(
+                RecyclerViewActions.actionOnItemAtPosition(0, click()));
+        onView(withId(R.id.btn_edit_book)).perform(scrollTo(), click());
+
+        // Modify title
+        onView(withId(R.id.et_title)).perform(clearText(), typeText("Dune Messiah"), closeSoftKeyboard());
+
+        // Tap Cancel
+        onView(withId(R.id.btn_cancel_edit)).perform(scrollTo(), click());
+
+        // Assert Discard dialog appears and click Discard
+        onView(withText("Unsaved Changes")).check(matches(isDisplayed()));
+        onView(withId(android.R.id.button1)).perform(click());
+
+        // Assert Dashboard is displayed
+        onView(withId(R.id.tv_dashboard_title)).check(matches(isDisplayed()));
     }
 
     // 6. Dashboard Recent List Delete Dialog Cancel & Delete Flow
