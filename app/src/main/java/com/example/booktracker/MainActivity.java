@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -20,6 +19,7 @@ import com.example.booktracker.databinding.ActivityMainBinding;
 import com.example.booktracker.model.Book;
 import com.example.booktracker.utils.Constants;
 import com.example.booktracker.utils.InsetsHelper;
+import com.example.booktracker.utils.ToastHelper;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkAndShowExtraToast();
         refreshDashboardData();
     }
 
@@ -60,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         executorService.shutdown();
+    }
+
+    private void checkAndShowExtraToast() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(Constants.EXTRA_MESSAGE)) {
+            String message = intent.getStringExtra(Constants.EXTRA_MESSAGE);
+            if (message != null && !message.isEmpty()) {
+                ToastHelper.show(this, message);
+                intent.removeExtra(Constants.EXTRA_MESSAGE);
+            }
+        }
     }
 
     private void setupRecyclerView() {
@@ -139,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                     executorService.execute(() -> {
                         dbHelper.deleteBook(book.getId());
                         mainHandler.post(() -> {
-                            Toast.makeText(MainActivity.this, "Book deleted", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(MainActivity.this, R.string.toast_book_deleted);
                             refreshDashboardData();
                         });
                     });

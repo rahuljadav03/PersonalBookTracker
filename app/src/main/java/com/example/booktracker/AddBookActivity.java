@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +18,7 @@ import com.example.booktracker.model.Book;
 import com.example.booktracker.utils.BookValidator;
 import com.example.booktracker.utils.Constants;
 import com.example.booktracker.utils.InsetsHelper;
+import com.example.booktracker.utils.ToastHelper;
 import com.example.booktracker.utils.ValidationResult;
 
 import java.util.Arrays;
@@ -81,12 +81,14 @@ public class AddBookActivity extends AppCompatActivity {
             editingBook = dbHelper.getBookById(bookId);
             mainHandler.post(() -> {
                 if (editingBook == null) {
-                    Toast.makeText(AddBookActivity.this, "Book not found", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(AddBookActivity.this, MainActivity.class);
+                    intent.putExtra(Constants.EXTRA_MESSAGE, getString(R.string.toast_book_not_found));
+                    startActivity(intent);
                     finish();
                     return;
                 }
 
-                binding.tvFormTitle.setText("Edit Book");
+                binding.tvFormTitle.setText(R.string.title_edit_book);
                 binding.btnSaveBook.setText("Update Book");
 
                 binding.etTitle.setText(editingBook.getTitle());
@@ -296,7 +298,7 @@ public class AddBookActivity extends AppCompatActivity {
 
     private void saveBook() {
         if (!validateForm(true)) {
-            Toast.makeText(this, "Please correct the errors in the form.", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(this, R.string.toast_please_correct_errors);
             return;
         }
 
@@ -322,7 +324,7 @@ public class AddBookActivity extends AppCompatActivity {
                     mainHandler.post(() -> {
                         binding.tilTitle.setError("A book with this title and author already exists.");
                         binding.tilAuthor.setError("A book with this title and author already exists.");
-                        Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                        ToastHelper.show(AddBookActivity.this, R.string.toast_error_duplicate_book);
                     });
                     return;
                 }
@@ -331,7 +333,7 @@ public class AddBookActivity extends AppCompatActivity {
                 if (!validationResult.isValid()) {
                     mainHandler.post(() -> {
                         displayValidationErrors(validationResult);
-                        Toast.makeText(AddBookActivity.this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(AddBookActivity.this, R.string.toast_validation_failed);
                     });
                     return;
                 }
@@ -340,17 +342,20 @@ public class AddBookActivity extends AppCompatActivity {
                     int rows = dbHelper.updateBook(book);
                     mainHandler.post(() -> {
                         if (rows > 0) {
-                            Toast.makeText(AddBookActivity.this, "Book updated successfully!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(AddBookActivity.this, BookDetailActivity.class);
+                            intent.putExtra(Constants.EXTRA_BOOK_ID, bookId);
+                            intent.putExtra(Constants.EXTRA_MESSAGE, getString(R.string.toast_book_updated_success));
+                            startActivity(intent);
                             finish();
                         } else {
-                            Toast.makeText(AddBookActivity.this, "Failed to update book.", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(AddBookActivity.this, R.string.toast_failed_to_update_book);
                         }
                     });
                 } catch (SQLiteConstraintException e) {
                     mainHandler.post(() -> {
                         binding.tilTitle.setError("A book with this title and author already exists.");
                         binding.tilAuthor.setError("A book with this title and author already exists.");
-                        Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                        ToastHelper.show(AddBookActivity.this, R.string.toast_error_duplicate_book);
                     });
                 }
             } else {
@@ -358,7 +363,7 @@ public class AddBookActivity extends AppCompatActivity {
                 if (!validationResult.isValid()) {
                     mainHandler.post(() -> {
                         displayValidationErrors(validationResult);
-                        Toast.makeText(AddBookActivity.this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(AddBookActivity.this, R.string.toast_validation_failed);
                     });
                     return;
                 }
@@ -369,10 +374,10 @@ public class AddBookActivity extends AppCompatActivity {
                         if (id == -1) {
                             binding.tilTitle.setError("A book with this title and author already exists.");
                             binding.tilAuthor.setError("A book with this title and author already exists.");
-                            Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                            ToastHelper.show(AddBookActivity.this, R.string.toast_error_duplicate_book);
                         } else {
-                            Toast.makeText(AddBookActivity.this, "Book added successfully!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(AddBookActivity.this, BookListActivity.class);
+                            intent.putExtra(Constants.EXTRA_MESSAGE, getString(R.string.toast_book_added_success));
                             startActivity(intent);
                             finish();
                         }
@@ -381,7 +386,7 @@ public class AddBookActivity extends AppCompatActivity {
                     mainHandler.post(() -> {
                         binding.tilTitle.setError("A book with this title and author already exists.");
                         binding.tilAuthor.setError("A book with this title and author already exists.");
-                        Toast.makeText(AddBookActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                        ToastHelper.show(AddBookActivity.this, R.string.toast_error_duplicate_book);
                     });
                 }
             }

@@ -90,4 +90,17 @@
     <!-- Errors -->
     <string name="error_required">This field is required</string>
     <string name="error_invalid_length">Invalid length</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_book_not_found">Book not found</string>
+    <string name="toast_book_not_found_or_deleted">Book not found or has been deleted</string>
+    <string name="toast_please_correct_errors">Please correct the errors in the form.</string>
+    <string name="toast_error_duplicate_book">Error: A book with this title and author already exists.</string>
+    <string name="toast_validation_failed">Validation failed. Please check field errors.</string>
+    <string name="toast_book_added_success">Book added successfully!</string>
+    <string name="toast_book_updated_success">Book updated successfully!</string>
+    <string name="toast_failed_to_update_book">Failed to update book.</string>
+    <string name="toast_no_changes_to_save">No changes to save</string>
+    <string name="toast_book_deleted">Book deleted</string>
+    <string name="toast_book_deleted_success">Book deleted successfully!</string>
 </resources>
