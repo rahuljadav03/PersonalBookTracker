@@ -7,6 +7,7 @@ public class Constants {
     // Intent Extra Keys
     public static final String EXTRA_BOOK_ID = "book_id";
     public static final String EXTRA_EDIT_MODE = "edit_mode";
+    public static final String EXTRA_MESSAGE = "extra_toast_message";
 
     // Book Statuses
     public static final String STATUS_WANT_TO_READ = "WANT_TO_READ";

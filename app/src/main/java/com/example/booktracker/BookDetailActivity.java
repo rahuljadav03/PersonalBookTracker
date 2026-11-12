@@ -11,7 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
@@ -27,6 +26,7 @@ import com.example.booktracker.utils.BookValidator;
 import com.example.booktracker.utils.Constants;
 import com.example.booktracker.utils.DateTimeUtils;
 import com.example.booktracker.utils.InsetsHelper;
+import com.example.booktracker.utils.ToastHelper;
 import com.example.booktracker.utils.ValidationResult;
 
 import java.util.Arrays;
@@ -77,7 +77,9 @@ public class BookDetailActivity extends AppCompatActivity {
 
         bookId = getIntent().getLongExtra(Constants.EXTRA_BOOK_ID, -1);
         if (bookId == -1) {
-            Toast.makeText(this, "Book not found", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(Constants.EXTRA_MESSAGE, getString(R.string.toast_book_not_found));
+            startActivity(intent);
             finish();
             return;
         }
@@ -112,9 +114,26 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        checkAndShowExtraToast();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         executorService.shutdown();
+    }
+
+    private void checkAndShowExtraToast() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(Constants.EXTRA_MESSAGE)) {
+            String message = intent.getStringExtra(Constants.EXTRA_MESSAGE);
+            if (message != null && !message.isEmpty()) {
+                ToastHelper.show(this, message);
+                intent.removeExtra(Constants.EXTRA_MESSAGE);
+            }
+        }
     }
 
     private void loadBookDetailsAndInitialize(Bundle savedInstanceState) {
@@ -122,7 +141,9 @@ public class BookDetailActivity extends AppCompatActivity {
             currentBook = dbHelper.getBookById(bookId);
             mainHandler.post(() -> {
                 if (currentBook == null) {
-                    Toast.makeText(BookDetailActivity.this, "Book not found or has been deleted", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(BookDetailActivity.this, MainActivity.class);
+                    intent.putExtra(Constants.EXTRA_MESSAGE, getString(R.string.toast_book_not_found_or_deleted));
+                    startActivity(intent);
                     finish();
                     return;
                 }
@@ -284,13 +305,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         binding.btnEditBook.setOnClickListener(v -> enterEditMode());
-        binding.btnCancelEdit.setOnClickListener(v -> {
-            if (hasUnsavedChanges()) {
-                showUnsavedChangesDialog(this::enterViewMode);
-            } else {
-                enterViewMode();
-            }
-        });
+        binding.btnCancelEdit.setOnClickListener(v -> navigateToDashboard());
 
         binding.btnSaveBook.setOnClickListener(v -> saveBookUpdate());
         binding.btnDeleteBook.setOnClickListener(v -> showDeleteConfirmationDialog());
@@ -335,7 +350,7 @@ public class BookDetailActivity extends AppCompatActivity {
         binding.layoutViewMode.setVisibility(View.GONE);
         binding.layoutEditMode.setVisibility(View.VISIBLE);
 
-        binding.tvDetailsHeader.setText("Edit Book");
+        binding.tvDetailsHeader.setText(R.string.title_edit_book);
         binding.btnSaveBook.setText("Update Book");
 
         binding.etTitle.setText(currentBook.getTitle());
@@ -493,13 +508,13 @@ public class BookDetailActivity extends AppCompatActivity {
 
     private void saveBookUpdate() {
         if (!hasUnsavedChanges()) {
-            Toast.makeText(this, "No changes to save", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(this, R.string.toast_no_changes_to_save);
             enterViewMode();
             return;
         }
 
         if (!validateForm(true)) {
-            Toast.makeText(this, "Please correct the errors in the form.", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(this, R.string.toast_please_correct_errors);
             return;
         }
 
@@ -517,7 +532,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 mainHandler.post(() -> {
                     binding.tilTitle.setError("A book with this title and author already exists.");
                     binding.tilAuthor.setError("A book with this title and author already exists.");
-                    Toast.makeText(BookDetailActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                    ToastHelper.show(BookDetailActivity.this, R.string.toast_error_duplicate_book);
                 });
                 return;
             }
@@ -530,7 +545,7 @@ public class BookDetailActivity extends AppCompatActivity {
             if (!validationResult.isValid()) {
                 mainHandler.post(() -> {
                     displayValidationErrors(validationResult);
-                    Toast.makeText(BookDetailActivity.this, "Validation failed. Please check field errors.", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(BookDetailActivity.this, R.string.toast_validation_failed);
                 });
                 return;
             }
@@ -540,22 +555,22 @@ public class BookDetailActivity extends AppCompatActivity {
                 Book reloadedBook = dbHelper.getBookById(currentBook.getId());
                 mainHandler.post(() -> {
                     if (rowsUpdated > 0 && reloadedBook != null) {
-                        Toast.makeText(BookDetailActivity.this, "Book updated successfully!", Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(BookDetailActivity.this, R.string.toast_book_updated_success);
                         currentBook = reloadedBook;
                         enterViewMode();
                     } else {
-                        Toast.makeText(BookDetailActivity.this, "Failed to update book.", Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(BookDetailActivity.this, R.string.toast_failed_to_update_book);
                     }
                 });
             } catch (SQLiteConstraintException e) {
                 mainHandler.post(() -> {
                     binding.tilTitle.setError("A book with this title and author already exists.");
                     binding.tilAuthor.setError("A book with this title and author already exists.");
-                    Toast.makeText(BookDetailActivity.this, "Error: A book with this title and author already exists.", Toast.LENGTH_LONG).show();
+                    ToastHelper.show(BookDetailActivity.this, R.string.toast_error_duplicate_book);
                 });
             } catch (Exception e) {
                 mainHandler.post(() -> {
-                    Toast.makeText(BookDetailActivity.this, "Error updating book: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    ToastHelper.show(BookDetailActivity.this, getString(R.string.toast_failed_to_update_book) + ": " + e.getMessage());
                 });
             }
         });
@@ -571,8 +586,11 @@ public class BookDetailActivity extends AppCompatActivity {
                     executorService.execute(() -> {
                         dbHelper.deleteBook(currentBook.getId());
                         mainHandler.post(() -> {
-                            Toast.makeText(BookDetailActivity.this, "Book deleted successfully!", Toast.LENGTH_SHORT).show();
-                            performDashboardNavigation();
+                            Intent intent = new Intent(BookDetailActivity.this, MainActivity.class);
+                            intent.putExtra(Constants.EXTRA_MESSAGE, getString(R.string.toast_book_deleted_success));
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                            startActivity(intent);
+                            finish();
                         });
                     });
                 })

@@ -23,4 +23,11 @@
     <dimen name="text_size_lg">18sp</dimen>
     <dimen name="text_size_xl">22sp</dimen>
     <dimen name="text_size_xxl">28sp</dimen>
+
+    <!-- Toast Dimensions -->
+    <dimen name="toast_corner_radius">24dp</dimen>
+    <dimen name="toast_max_width">300dp</dimen>
+    <dimen name="toast_padding_horizontal">16dp</dimen>
+    <dimen name="toast_padding_vertical">10dp</dimen>
+    <dimen name="toast_margin_bottom">64dp</dimen>
 </resources>
