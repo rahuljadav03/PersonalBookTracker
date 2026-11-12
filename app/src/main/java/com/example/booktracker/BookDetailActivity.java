@@ -305,13 +305,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
     private void setupClickListeners() {
         binding.btnEditBook.setOnClickListener(v -> enterEditMode());
-        binding.btnCancelEdit.setOnClickListener(v -> {
-            if (hasUnsavedChanges()) {
-                showUnsavedChangesDialog(this::enterViewMode);
-            } else {
-                enterViewMode();
-            }
-        });
+        binding.btnCancelEdit.setOnClickListener(v -> navigateToDashboard());
 
         binding.btnSaveBook.setOnClickListener(v -> saveBookUpdate());
         binding.btnDeleteBook.setOnClickListener(v -> showDeleteConfirmationDialog());
