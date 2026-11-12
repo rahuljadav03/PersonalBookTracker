@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -23,6 +22,7 @@ import com.example.booktracker.databinding.ActivityBookListBinding;
 import com.example.booktracker.model.Book;
 import com.example.booktracker.utils.Constants;
 import com.example.booktracker.utils.InsetsHelper;
+import com.example.booktracker.utils.ToastHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -92,6 +92,7 @@ public class BookListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        checkAndShowExtraToast();
         loadBooksFromDatabase();
     }
 
@@ -100,6 +101,17 @@ public class BookListActivity extends AppCompatActivity {
         super.onDestroy();
         mainHandler.removeCallbacks(searchRunnable);
         executorService.shutdown();
+    }
+
+    private void checkAndShowExtraToast() {
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(Constants.EXTRA_MESSAGE)) {
+            String message = intent.getStringExtra(Constants.EXTRA_MESSAGE);
+            if (message != null && !message.isEmpty()) {
+                ToastHelper.show(this, message);
+                intent.removeExtra(Constants.EXTRA_MESSAGE);
+            }
+        }
     }
 
     private void setupRecyclerView() {
@@ -277,7 +289,7 @@ public class BookListActivity extends AppCompatActivity {
                     executorService.execute(() -> {
                         dbHelper.deleteBook(book.getId());
                         mainHandler.post(() -> {
-                            Toast.makeText(BookListActivity.this, "Book deleted", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(BookListActivity.this, R.string.toast_book_deleted);
                             loadBooksFromDatabase();
                         });
                     });

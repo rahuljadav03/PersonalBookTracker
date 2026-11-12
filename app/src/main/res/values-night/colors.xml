@@ -2,4 +2,8 @@
 <resources>
     <!-- Delete Red Color for Dark Theme (#FF6B6B) -->
     <color name="delete_red">#FF6B6B</color>
+
+    <!-- Overlay Toast Colors (Dark Gray ~90% Opacity) -->
+    <color name="toast_background">#E61C1C1E</color>
+    <color name="toast_text_color">#FFFFFF</color>
 </resources>

@@ -17,4 +17,8 @@
 
     <!-- Delete Red Color (Soft Coral Red #FF6B6B) -->
     <color name="delete_red">#FF6B6B</color>
+
+    <!-- Overlay Toast Colors (Dark Gray ~90% Opacity) -->
+    <color name="toast_background">#E6212121</color>
+    <color name="toast_text_color">#FFFFFF</color>
 </resources>
