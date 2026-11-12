@@ -1,7 +1,21 @@
 # 📚 Personal Book Tracker
 
+**Version:** `1.0.1`  
 **Personal Book Tracker** is an offline native Android application designed to help users track their personal reading goals, manage book collections, and view reading statistics. The application is built using Java, Android XML ViewBinding, and a local SQLite database for complete data privacy without requiring an internet connection.
 
+**Project Type:** College Mini Project (Mobile Application Development)
+
+---
+
+## 📋 Changelog
+
+- **v1.0.1 (Current Release):**
+  - Replaced system toasts with custom, icon-free overlay toast-style messages (`ToastHelper`) for a cleaner UI across Android 12+ and custom ROMs.
+  - Updated the Edit panel's Cancel button (`btn_cancel_edit`) to return directly to the dashboard (`MainActivity`).
+  - Applied soft coral red (`#FF6B6B`) to all delete actions with zero press/ripple overlay flooding.
+  - Removed progress bar stop indicator dots (`trackStopIndicatorSize = 0dp`) across all screens.
+- **v1.0.0 (Initial Release):**
+  - First public release with CRUD operations, case-insensitive search and filtering, reading statistics, IST 12-hour timestamps, 3-layer validation system, and signed APK release pipeline.
 
 ---
 
@@ -9,12 +23,30 @@
 
 - 📊 **Dashboard:** Displays overall library counts (Total Books, Want to Read, Currently Reading, Completed) and a quick view of recently added books.
 - ➕ **Add Book:** Simple form to add new books with input validation for title, author, category, total pages, pages read, reading status, and optional description.
-- 📖 **Library List:** View all books in your library in a clean scrollable list with progress indicators.
-- ✏️ **Edit Book:** Seamless inline form editing with prefilled fields and automatic validation rules.
-- 🗑️ **Delete Book:** Safely delete books from the library with an explicit confirmation dialog.
+- 📖 **Library List:** View all books in your library in a clean scrollable list with dotless progress indicators (`trackStopIndicatorSize = 0dp`).
+- ✏️ **Edit Book:** Seamless inline form editing with prefilled fields and automatic validation rules. Tapping Cancel returns directly to the dashboard.
+- 🗑️ **Delete Book:** Safely delete books from the library with a soft coral red (`#FF6B6B`) button, zero press/ripple overlay flooding, and an explicit confirmation dialog.
 - 🔍 **Search & Filter:** Search books by title or author, filter by reading status, and sort by title, author, or addition date.
 - 📈 **Reading Statistics:** View library summary metrics including completion rate, average pages read per book, and status and category breakdowns.
 - 🕒 **IST Date and Time:** Timestamps for creation and updates automatically formatted in Indian Standard Time (Asia/Kolkata) in 12-hour AM/PM format.
+
+---
+
+## 📸 Screenshots
+
+| Splash & Launch | Dashboard | Add Book |
+| :---: | :---: | :---: |
+| ![Splash Screen](docs/screenshots/splash.png) | ![Dashboard](docs/screenshots/dashboard.png) | ![Add Book Form](docs/screenshots/add_book.png) |
+
+| Library List | Book Details | Edit Mode | Statistics |
+| :---: | :---: | :---: | :---: |
+| ![Book List](docs/screenshots/book_list.png) | ![Book Details](docs/screenshots/book_details.png) | ![Edit Mode](docs/screenshots/edit_book.png) | ![Reading Statistics](docs/screenshots/statistics.png) |
+
+### 📷 Screenshots to Retake for v1.0.1
+When updating documentation images for v1.0.1, retake the following screenshots:
+1. `book_details.png`: To reflect the Back button below Delete Book, the removal of "Update Progress", and the `#FF6B6B` zero-ripple Delete button.
+2. `edit_book.png`: To show the Edit Book panel with the updated Cancel navigation behavior.
+3. `dashboard.png` & `book_list.png`: To capture the new icon-free custom overlay toast messages (`ToastHelper`).
 
 ---
 
@@ -23,7 +55,7 @@
 | Category | Technology |
 | :--- | :--- |
 | **Language** | Java (JDK 11) |
-| **UI Framework** | Android XML, ViewBinding, Material Components (Material 3) |
+| **UI Framework** | Android XML, ViewBinding, Material Components (Material 3 v1.14.0) |
 | **Database** | SQLite via SQLiteOpenHelper |
 | **Min SDK** | 24 (Android 7.0) |
 | **Target SDK** | 35 (Android 15) |
@@ -57,7 +89,7 @@
                      | (View Mode & Edit Mode)   |
                      +-------------+-------------+
                                    |
-                                   | (Click Back)
+                                   | (Click Back or Cancel)
                                    v
                      +---------------------------+
                      |  MainActivity (Dashboard) |
@@ -70,6 +102,7 @@
 
 - **Database Name:** `BookTracker.db`
 - **Table Name:** `books`
+- **Database Version:** `1` (Unchanged in v1.0.1 to preserve existing user data)
 
 The database contains a case-insensitive UNIQUE constraint on the combination of `title` and `author`, ensuring that the exact same title and author cannot be saved twice.
 
@@ -112,51 +145,72 @@ Validation runs across three distinct layers to ensure complete data integrity:
 ```
 PersonalBookTracker/
 ├── app/
-│   ├── build.gradle.kts
-│   ├── proguard-rules.pro
+│   ├── build.gradle.kts          # App-level build configuration (versionCode=2, versionName=1.0.1)
 │   └── src/
 │       ├── main/
-│       │   ├── AndroidManifest.xml
+│       │   ├── AndroidManifest.xml # App manifest and activity declarations
 │       │   ├── java/com/example/booktracker/
-│       │   │   ├── MainActivity.java          # Dashboard
-│       │   │   ├── AddBookActivity.java       # Add a new book
-│       │   │   ├── BookListActivity.java      # Book list, search, filter, sort
-│       │   │   ├── BookDetailActivity.java    # View, edit and delete a book
-│       │   │   ├── StatisticsActivity.java    # Reading statistics
-│       │   │   ├── adapter/
-│       │   │   │   └── BookAdapter.java       # Shows books in RecyclerView
-│       │   │   ├── database/
-│       │   │   │   └── DatabaseHelper.java    # SQLite create and CRUD operations
-│       │   │   ├── model/
-│       │   │   │   └── Book.java              # Book data class
+│       │   │   ├── MainActivity.java        # Main dashboard screen
+│       │   │   ├── AddBookActivity.java     # Add book screen
+│       │   │   ├── BookListActivity.java    # Library list screen with search/filters
+│       │   │   ├── BookDetailActivity.java  # Book details and inline edit panel
+│       │   │   ├── StatisticsActivity.java  # Reading analytics screen
+│       │   │   ├── adapter/BookAdapter.java # RecyclerView adapter for book cards
+│       │   │   ├── database/DatabaseHelper.java # SQLite database manager
+│       │   │   ├── model/Book.java          # Book data model
 │       │   │   └── utils/
 │       │   │       ├── BookValidator.java     # Input validation rules
 │       │   │       ├── Constants.java         # Categories, status values, limits
 │       │   │       ├── DateTimeUtils.java     # IST 12-hour date and time format
 │       │   │       ├── InsetsHelper.java      # Screen margin / system bar handling
+│       │   │       ├── ToastHelper.java       # Icon-free custom in-app overlay toast manager
 │       │   │       └── ValidationResult.java  # Validation result holder
 │       │   └── res/
-│       │       ├── drawable/                  # Icons and images
-│       │       ├── layout/                    # XML screen layouts
+│       │       ├── drawable/
+│       │       │   └── bg_custom_toast.xml    # Rounded dark background for overlay toast
+│       │       ├── layout/
+│       │       │   └── view_toast.xml         # Custom in-app overlay toast layout
 │       │       ├── values/                    # Colors, strings, themes, dimensions
 │       │       └── values-night/              # Dark mode values
-│       ├── test/java/com/example/booktracker/
-│       │   └── utils/
-│       │       ├── BookValidatorTest.java     # Unit tests for validation
-│       │       └── DateTimeUtilsTest.java     # Unit tests for date and time
-│       └── androidTest/java/com/example/booktracker/
-│           ├── database/
-│           │   └── DatabaseHelperTest.java    # Database tests
-│           └── ui/
-│               └── AppUiTest.java             # Screen (Espresso) tests
-├── build.gradle.kts
-├── gradle.properties
-└── README.md
+│       ├── test/                        # Local JUnit 4 unit tests
+│       └── androidTest/                 # Instrumented Espresso and database tests
+├── build.gradle.kts                     # Root-level Gradle build file
+└── README.md                            # Project documentation
 ```
+
+### 🌿 Git Branching Workflow
+The codebase follows a clean git feature-branch workflow:
+- `main`: Stable production branch (`v1.0.1`).
+- `develop`: Primary integration branch for active development.
+- `feature/*`: Feature development branches (e.g., `feature/toast-overlay`).
+- `fix/*`: Bug fix branches (e.g., `fix/cancel-navigation`).
+- `test/*`: Automated test suite updates.
+- `docs/*`: Project documentation updates.
+- `chore/*`: Version bumps and release engineering.
 
 ---
 
-## ▶️ How to Run
+## 📦 Installation & Upgrades
+
+### Installing Fresh Signed Release APK
+1. Download `app-release.apk` (or build locally using `./gradlew assembleRelease`).
+2. Transfer `app-release.apk` to your Android device via Bluetooth, USB file transfer, or Google Drive.
+3. On your Android phone, open your File Manager, tap `app-release.apk`, and enable **Allow from this source** if prompted.
+4. Tap **Install** to complete installation.
+
+### Upgrading from v1.0.0 to v1.0.1 Without Data Loss
+To update your installed app from v1.0.0 to v1.0.1 without losing your saved books:
+1. Ensure the new APK is built using the **same signing keystore** as v1.0.0.
+2. Verify `versionCode` is higher (`versionCode = 2` in v1.0.1 vs `versionCode = 1` in v1.0.0).
+3. Install `app-release.apk` directly **over the existing installation** — **DO NOT UNINSTALL** v1.0.0 first!
+4. Android will perform an in-place upgrade, preserving your local `BookTracker.db` database intact.
+
+> [!WARNING]
+> **Data Loss Warning:** Uninstalling the app or selecting "Clear Data" in Android App Info will permanently delete the local SQLite database (`BookTracker.db`) and erase all your saved books!
+
+---
+
+## ▶️ How to Run in Android Studio
 
 1. Open **Android Studio** (Ladybug 2024.2 or newer).
 2. Select **Open** and choose the `PersonalBookTracker` project directory.
